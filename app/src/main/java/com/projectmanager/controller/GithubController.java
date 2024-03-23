@@ -2,6 +2,9 @@ package com.projectmanager.controller;
 
 import java.util.List;
 
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -11,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.projectmanager.service.GithubService;
+import com.projectmanager.service.GithubWebService;
 
 import reactor.core.publisher.Mono;
 
@@ -19,15 +22,38 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/github")
 public class GithubController {
     
-    private final GithubService githubService;
+    private final GithubWebService githubService;
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
 
     @Autowired
-    public GithubController(GithubService githubService, OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
+    public GithubController(GithubWebService githubService, OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
         this.githubService = githubService;
         this.oauth2AuthorizedClientService = oauth2AuthorizedClientService;
     }
-//Mono<List<String>>
+    @GetMapping("/teste")
+    public String getGithub(OAuth2AuthenticationToken authenticationToken){
+        String accessToken = getAccessToken(authenticationToken, "github");
+        try {
+            GitHub github = new GitHubBuilder().withOAuthToken(accessToken).build();
+            GHMyself user = github.getMyself();
+            System.out.println(accessToken);
+            System.out.println("oi");
+            for(int i = 0; i < user.listRepositories().toList().size();i++){
+                System.out.println(user.listRepositories().toList().get(i).getName());
+            }
+            
+            return user.listRepositories().toList().toString();
+            
+        }
+        catch (Exception e) {
+            System.out.println("ERRO ERRO ERRO \n\n\n\n");
+            System.out.println(e);
+            return null;
+        } 
+        
+    }
+
+    //Pagina que lista repositorios
     @GetMapping("/repo")
     public Mono<List<String>> getRepo(OAuth2AuthenticationToken authenticationToken){
         System.out.println("/n/n/naccessToken");
@@ -48,12 +74,14 @@ public class GithubController {
             } else {
                 // Log or handle missing access token case (e.g., prompt user to re-authorize)
                 System.out.println("Access token is missing for client: " + clientRegistrationId);
-                return null; // Or throw a more specific exception
-            }
-        } else {
+                throw new RuntimeException("Access token is missing for client"); 
+            } 
+        }
+        else {
             // Log or handle missing client case
             System.out.println("Client not found for clientRegistrationId: " + clientRegistrationId);
-            return null; // Or throw a more specific exception
+            throw new RuntimeException("Client missing"); 
         }
-}
+    
+    }
 }

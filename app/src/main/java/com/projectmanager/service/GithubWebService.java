@@ -12,12 +12,12 @@ import reactor.core.publisher.Mono;
 
 @Service
 
-public class GithubService {
+public class GithubWebService {
     
     private final WebClient webClient;
 
     @Autowired
-    public GithubService(WebClient.Builder webClientBuilder) {
+    public GithubWebService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://api.github.com").build();
     }
 
@@ -30,4 +30,6 @@ public class GithubService {
         .map(GithubRepoResponse::getName)
         .collectList();
     }
+
+    
 }
