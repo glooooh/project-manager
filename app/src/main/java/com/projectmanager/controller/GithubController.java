@@ -10,32 +10,41 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projectmanager.model.RepositoryModel;
+import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.GithubWebService;
 
 import reactor.core.publisher.Mono;
 
-@RestController
+@Controller
 @RequestMapping("/github")
 public class GithubController {
     
     private final GithubWebService githubService;
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
+    private final GithubAPIService apiService;
 
     @Autowired
-    public GithubController(GithubWebService githubService, OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
+    public GithubController(GithubWebService githubService, OAuth2AuthorizedClientService oauth2AuthorizedClientService, GithubAPIService apiService) {
         this.githubService = githubService;
         this.oauth2AuthorizedClientService = oauth2AuthorizedClientService;
+        this.apiService = apiService;
     }
     @GetMapping("/teste")
     public String getGithub(OAuth2AuthenticationToken authenticationToken){
         String accessToken = getAccessToken(authenticationToken, "github");
+        GHMyself user = apiService.getUser(accessToken);
+        
+
         try {
-            GitHub github = new GitHubBuilder().withOAuthToken(accessToken).build();
-            GHMyself user = github.getMyself();
+            apiService.getRepositories(user);
             System.out.println(accessToken);
             System.out.println("oi");
             for(int i = 0; i < user.listRepositories().toList().size();i++){
@@ -46,7 +55,6 @@ public class GithubController {
             
         }
         catch (Exception e) {
-            System.out.println("ERRO ERRO ERRO \n\n\n\n");
             System.out.println(e);
             return null;
         } 
@@ -63,6 +71,17 @@ public class GithubController {
         System.out.println(repositories);
         return repositories;
     }
+
+    @GetMapping("/lista")
+    public String listagemRepo(Model model, OAuth2AuthenticationToken authenticationToken){
+        RepositoryModel repos = new RepositoryModel();
+        repos.setId(10);
+        repos.setName("batata");
+        model.addAttribute("repos",repos);
+        //String accessToken = getAccessToken(authenticationToken, "github");
+        //GHMyself user=apiService.getUser(accessToken);
+        return "repos";
+    }
   
     private String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId){
         OAuth2AuthorizedClient client = oauth2AuthorizedClientService.loadAuthorizedClient(clientRegistrationId, authenticationToken.getName());
@@ -72,7 +91,6 @@ public class GithubController {
             if (accessToken != null) {
                 return accessToken.getTokenValue();
             } else {
-                // Log or handle missing access token case (e.g., prompt user to re-authorize)
                 System.out.println("Access token is missing for client: " + clientRegistrationId);
                 throw new RuntimeException("Access token is missing for client"); 
             } 
