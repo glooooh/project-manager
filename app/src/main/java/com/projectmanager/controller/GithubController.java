@@ -3,6 +3,7 @@ package com.projectmanager.controller;
 import java.util.List;
 
 import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -71,9 +72,16 @@ public class GithubController {
     @GetMapping("/lista")
     public String listagemRepo(Model model, OAuth2AuthenticationToken authenticationToken){
         RepositoryModel repos = new RepositoryModel();
-        repos.setId(10);
-        repos.setName("batata");
-        model.addAttribute("repos",repos);
+        String accessToken = getAccessToken(authenticationToken, "github");
+        GHMyself user = apiService.getUser(accessToken);
+        try {
+            GHRepository teste = user.getRepository("CRUD_POKEMON");
+            repos.setId(teste.getId());
+            repos.setName(teste.getName());
+            model.addAttribute("repos",repos);
+        } catch (Exception e) {
+            return null;
+        }         
         //String accessToken = getAccessToken(authenticationToken, "github");
         //GHMyself user=apiService.getUser(accessToken);
         return "repos";
