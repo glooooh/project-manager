@@ -6,8 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 //import org.springframework.security.web.servlet.SecurityFilterChain;
 
-
-
 @Configuration
 public class SpringSecurityConfig {
     
@@ -16,7 +14,7 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf().disable().authorizeRequests()
-        .requestMatchers("/github/**","/home/**") // Paginas  que precisam de autenticação
+        .requestMatchers("/github/**","/home/**", "/login") // Paginas  que precisam de autenticação
         .authenticated()
         .requestMatchers("/**").permitAll() //Paginas que não precisam de autenticação
         .and()

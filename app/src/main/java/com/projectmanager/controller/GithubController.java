@@ -34,6 +34,7 @@ public class GithubController {
         this.oauth2AuthorizedClientService = oauth2AuthorizedClientService;
         this.apiService = apiService;
     }
+    
     @GetMapping("/teste")
     public String getGithub(OAuth2AuthenticationToken authenticationToken){
         String accessToken = getAccessToken(authenticationToken, "github");
