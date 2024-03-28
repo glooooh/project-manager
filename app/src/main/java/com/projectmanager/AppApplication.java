@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import githubService.SpringBootApplication;
 //import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
-@SpringBootApplication
+@SpringBootApplication()
 public class AppApplication {
 
 	public static void main(String[] args) {
