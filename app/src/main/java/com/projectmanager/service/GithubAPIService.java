@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 
 import com.projectmanager.model.RepositoryModel;
+import com.projectmanager.model.UserModel;
 
 @Service
 public class GithubAPIService {
@@ -46,7 +47,18 @@ public class GithubAPIService {
         newRepo.setUrl(oldRepo.getUrl().toString());
 
         return newRepo;
-
     }
+
+    public UserModel getUserModel(String accessToken) throws IOException {
+
+        GHMyself user = getUser(accessToken);
+    UserModel newUser = new UserModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
+
+    // Set other user attributes (optional)
+    newUser.setFirstName(user.getName()); // Assuming getName() provides the full name
+    // Check if user object has methods for additional attributes like website, company, etc. and set them accordingly.
+
+    return newUser;
+}
     
 }
