@@ -1,25 +1,30 @@
 package com.projectmanager.controller;
 
-import java.util.List;
+import java.io.IOException;
 
+import java.util.Collection;
+
+
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.projectmanager.service.GithubWebService;
+import com.projectmanager.service.GithubAPIService;
 
-import reactor.core.publisher.Mono;
+
 
 @Controller
-public class LoginController {
+public class HomeController {
 
     @Autowired
-    private GithubWebService githubWebService; // Injete o serviço que obtém os repositórios do GitHub
+    private GithubAPIService githubService; // Injete o serviço que obtém os repositórios do GitHub
 
     @Autowired
     private OAuth2AuthorizedClientService oauth2AuthorizedClientService; // Injete o serviço de cliente autorizado
@@ -38,13 +43,22 @@ public class LoginController {
         if (!(authenticationToken != null && authenticationToken.isAuthenticated())) {
             return "redirect:/";
         } else {
-            String accessToken = getAccessToken(authenticationToken, "github");
+            String accessToken = githubService.getAccessToken(authenticationToken, "github",oauth2AuthorizedClientService);
 
             // Obter os repositórios do usuário logado
-            Mono<List<String>> repositories = githubWebService.getRepositories(accessToken);
+            GHMyself loggedUser = githubService.getUser(accessToken);
+            Collection<GHRepository> repositories;
+            System.out.println("===============" + loggedUser.getId()+ "============");
+            try {
+                repositories = githubService.getRepositories(loggedUser);
+                model.addAttribute("repositories", repositories);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
             // Adicionar os repositórios à model
-            model.addAttribute("repositories", repositories.block()); // Observe que estamos bloqueando a chamada aqui
+             // Observe que estamos bloqueando a chamada aqui
 
             return "home";
         }
@@ -60,19 +74,5 @@ public class LoginController {
         return "sobre";
     }
 
-    private String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId) {
-        OAuth2AuthorizedClient client = oauth2AuthorizedClientService.loadAuthorizedClient(clientRegistrationId,
-                authenticationToken.getName());
-
-        if (client != null) {
-            OAuth2AccessToken accessToken = client.getAccessToken();
-            if (accessToken != null) {
-                return accessToken.getTokenValue();
-            } else {
-                throw new RuntimeException("Access token is missing for client");
-            }
-        } else {
-            throw new RuntimeException("Client missing");
-        }
-    }
+    
 }
