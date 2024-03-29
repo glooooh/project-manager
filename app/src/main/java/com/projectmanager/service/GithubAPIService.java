@@ -7,6 +7,10 @@ import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 
@@ -60,5 +64,24 @@ public class GithubAPIService {
 
     return newUser;
 }
+public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,OAuth2AuthorizedClientService oauth2AuthorizedClientService){
+        OAuth2AuthorizedClient client = oauth2AuthorizedClientService.loadAuthorizedClient(clientRegistrationId, authenticationToken.getName());
+
+        if (client != null) {
+            OAuth2AccessToken accessToken = client.getAccessToken();
+            if (accessToken != null) {
+                return accessToken.getTokenValue();
+            } else {
+                System.out.println("Access token is missing for client: " + clientRegistrationId);
+                throw new RuntimeException("Access token is missing for client"); 
+            } 
+        }
+        else {
+            // Log or handle missing client case
+            System.out.println("Client not found for clientRegistrationId: " + clientRegistrationId);
+            throw new RuntimeException("Client missing"); 
+        }
+    
+    }
     
 }

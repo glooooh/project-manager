@@ -8,10 +8,10 @@ import java.util.Collection;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,12 +43,12 @@ public class HomeController {
         if (!(authenticationToken != null && authenticationToken.isAuthenticated())) {
             return "redirect:/";
         } else {
-            String accessToken = getAccessToken(authenticationToken, "github");
+            String accessToken = githubService.getAccessToken(authenticationToken, "github",oauth2AuthorizedClientService);
 
             // Obter os repositórios do usuário logado
             GHMyself loggedUser = githubService.getUser(accessToken);
             Collection<GHRepository> repositories;
-            
+            System.out.println("===============" + loggedUser.getId()+ "============");
             try {
                 repositories = githubService.getRepositories(loggedUser);
                 model.addAttribute("repositories", repositories);
@@ -74,19 +74,5 @@ public class HomeController {
         return "sobre";
     }
 
-    private String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId) {
-        OAuth2AuthorizedClient client = oauth2AuthorizedClientService.loadAuthorizedClient(clientRegistrationId,
-                authenticationToken.getName());
-
-        if (client != null) {
-            OAuth2AccessToken accessToken = client.getAccessToken();
-            if (accessToken != null) {
-                return accessToken.getTokenValue();
-            } else {
-                throw new RuntimeException("Access token is missing for client");
-            }
-        } else {
-            throw new RuntimeException("Client missing");
-        }
-    }
+    
 }
