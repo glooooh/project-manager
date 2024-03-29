@@ -1,7 +1,12 @@
 package com.projectmanager.controller;
 
-import java.util.List;
+import java.io.IOException;
 
+import java.util.Collection;
+
+
+import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -11,15 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.projectmanager.service.GithubWebService;
+import com.projectmanager.service.GithubAPIService;
 
-import reactor.core.publisher.Mono;
+
 
 @Controller
-public class LoginController {
+public class HomeController {
 
     @Autowired
-    private GithubWebService githubWebService; // Injete o serviço que obtém os repositórios do GitHub
+    private GithubAPIService githubService; // Injete o serviço que obtém os repositórios do GitHub
 
     @Autowired
     private OAuth2AuthorizedClientService oauth2AuthorizedClientService; // Injete o serviço de cliente autorizado
@@ -41,10 +46,19 @@ public class LoginController {
             String accessToken = getAccessToken(authenticationToken, "github");
 
             // Obter os repositórios do usuário logado
-            Mono<List<String>> repositories = githubWebService.getRepositories(accessToken);
+            GHMyself loggedUser = githubService.getUser(accessToken);
+            Collection<GHRepository> repositories;
+            
+            try {
+                repositories = githubService.getRepositories(loggedUser);
+                model.addAttribute("repositories", repositories);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
             // Adicionar os repositórios à model
-            model.addAttribute("repositories", repositories.block()); // Observe que estamos bloqueando a chamada aqui
+             // Observe que estamos bloqueando a chamada aqui
 
             return "home";
         }
