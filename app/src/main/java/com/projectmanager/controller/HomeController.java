@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import java.util.Collection;
 
-
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.projectmanager.model.UserModel;
 import com.projectmanager.service.GithubAPIService;
-
-
 
 @Controller
 public class HomeController {
@@ -39,16 +37,17 @@ public class HomeController {
      */
 
     @GetMapping("/home")
-    public String getHome(Model model, OAuth2AuthenticationToken authenticationToken) {
+    public String getHome(Model model, OAuth2AuthenticationToken authenticationToken) throws IOException {
         if (!(authenticationToken != null && authenticationToken.isAuthenticated())) {
             return "redirect:/";
         } else {
-            String accessToken = githubService.getAccessToken(authenticationToken, "github",oauth2AuthorizedClientService);
+            String accessToken = githubService.getAccessToken(authenticationToken, "github",
+                    oauth2AuthorizedClientService);
 
             // Obter os repositórios do usuário logado
             GHMyself loggedUser = githubService.getUser(accessToken);
             Collection<GHRepository> repositories;
-            System.out.println("===============" + loggedUser.getId()+ "============");
+            System.out.println("===============" + loggedUser.getId() + "============");
             try {
                 repositories = githubService.getRepositories(loggedUser);
                 model.addAttribute("repositories", repositories);
@@ -57,10 +56,13 @@ public class HomeController {
                 e.printStackTrace();
             }
 
-            // Adicionar os repositórios à model
-             // Observe que estamos bloqueando a chamada aqui
+            // A def. do UserModel aqui é só um exemplo usando dummy
+            UserModel user = new UserModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
+                    loggedUser.getEmail(), "dummyFirstName");
+            model.addAttribute("user", user);
 
-            return "home";
+            String user_id = String.valueOf(loggedUser.getId());
+            return "redirect:/user/" + user_id;
         }
     }
 
@@ -74,5 +76,4 @@ public class HomeController {
         return "sobre";
     }
 
-    
 }
