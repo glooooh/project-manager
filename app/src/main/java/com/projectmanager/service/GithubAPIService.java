@@ -36,31 +36,32 @@ public class GithubAPIService {
 
     public Collection<GHRepository> getRepositories(GHMyself user) throws IOException {
         Collection<GHRepository> repositories = user.getRepositories().values();
-        return repositories;     
+        return repositories;
     }
 
     public RepositoryModel getRepositoryModel(GHMyself user, String repoName) throws IOException {
+        
+        Collection<GHRepository> repositories = getRepositories(user);
         RepositoryModel newRepo = new RepositoryModel();
-        GHRepository oldRepo = user.getRepository(repoName);
 
-        newRepo.setName(oldRepo.getName());
-        newRepo.setId(oldRepo.getId());
-        newRepo.setDescription(oldRepo.getDescription());
-        newRepo.setLanguage(oldRepo.getLanguage());
-        newRepo.setOwner(oldRepo.getOwnerName());
-        newRepo.setUrl(oldRepo.getUrl().toString());
-
+        for (GHRepository oldRepo: repositories){
+            if(oldRepo.getName().equals(repoName)){
+                newRepo.setName(oldRepo.getName());
+                newRepo.setId(oldRepo.getId());
+                newRepo.setDescription(oldRepo.getDescription());
+                newRepo.setLanguage(oldRepo.getLanguage());
+                newRepo.setOwner(oldRepo.getOwnerName());
+                newRepo.setUrl(oldRepo.getUrl().toString());
+            }
+            //System.out.println();
+        }
         return newRepo;
     }
 
     public UserModel getUserModel(String accessToken) throws IOException {
 
         GHMyself user = getUser(accessToken);
-    UserModel newUser = new UserModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
-
-    // Set other user attributes (optional)
-    newUser.setFirstName(user.getName()); // Assuming getName() provides the full name
-    // Check if user object has methods for additional attributes like website, company, etc. and set them accordingly.
+        UserModel newUser = new UserModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
 
     return newUser;
 }
@@ -77,7 +78,7 @@ public String getAccessToken(OAuth2AuthenticationToken authenticationToken, Stri
             } 
         }
         else {
-            // Log or handle missing client case
+            
             System.out.println("Client not found for clientRegistrationId: " + clientRegistrationId);
             throw new RuntimeException("Client missing"); 
         }

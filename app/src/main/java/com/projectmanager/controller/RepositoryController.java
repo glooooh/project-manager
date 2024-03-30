@@ -43,6 +43,7 @@ public class RepositoryController {
 
         GHMyself loggedUser = githubService.getUser(accessToken);
         Collection<GHRepository> repositories;
+        
 
         try {
             repositories = githubService.getRepositories(loggedUser);
@@ -64,7 +65,7 @@ public class RepositoryController {
         GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
 
         if (!user_id.equals(Long.toString(loggedUser.getId()))) {
-            model.addAttribute("errorMessage", "Erro ao obter informações do repositório.");
+            model.addAttribute("errorMessage", "Você está tentando acessar um repositório de outro usuário");
             return "error";
         }
         try {
