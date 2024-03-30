@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.projectmanager.model.UserModel;
 import com.projectmanager.service.GithubAPIService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class HomeController {
 
@@ -28,13 +30,11 @@ public class HomeController {
     private OAuth2AuthorizedClientService oauth2AuthorizedClientService; // Injete o serviço de cliente autorizado
                                                                          // OAuth2
 
-    // Descomentar isso e remover o /home dos urls com autenticacao
-    /*
-     * @GetMapping
-     * public String defaultRedirect(){
-     * return "redirect:/home";
-     * }
-     */
+    @GetMapping("/")
+    public String getIndex(Model model, HttpServletRequest request) {
+        model.addAttribute("request", request.getRequestURI());
+        return "index";
+    }
 
     @GetMapping("/home")
     public String getHome(Model model, OAuth2AuthenticationToken authenticationToken) throws IOException {
