@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100" data-bs-theme="auto">
 
-<head th:replace="~{fragments/general.html :: head}"></head>
+<head th:replace="~{fragments/nav-logged.html :: head}"></head>
 
 <body class="d-flex h-100 text-center text-bg-dark">
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -25,7 +25,7 @@
     </svg>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <div th:replace="~{fragments/general.html :: header_fragments('Home')}"></div>
+        <div th:replace="~{fragments/nav-logged.html :: header_fragments('Home')}"></div>
 
         <main class="px-3">
             <div class="container">

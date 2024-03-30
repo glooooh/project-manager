@@ -44,7 +44,6 @@ public class RepositoryController {
         GHMyself loggedUser = githubService.getUser(accessToken);
         Collection<GHRepository> repositories;
         
-
         try {
             repositories = githubService.getRepositories(loggedUser);
             model.addAttribute("repositories", repositories);
