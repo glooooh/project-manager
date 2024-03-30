@@ -48,8 +48,10 @@ public class HomeController {
             GHMyself loggedUser = githubService.getUser(accessToken);
             Collection<GHRepository> repositories;
             System.out.println("===============" + loggedUser.getId() + "============");
+
             try {
                 repositories = githubService.getRepositories(loggedUser);
+
                 model.addAttribute("repositories", repositories);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
