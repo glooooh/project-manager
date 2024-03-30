@@ -31,41 +31,19 @@ public class HomeController {
                                                                          // OAuth2
 
     @GetMapping("/")
-    public String getIndex(Model model, HttpServletRequest request) {
-        model.addAttribute("request", request.getRequestURI());
+    public String getIndex(OAuth2AuthenticationToken authenticationToken) {
+        if (isAuthenticated(authenticationToken)) {
+            return "redirect:/home";
+        }
         return "index";
     }
 
     @GetMapping("/home")
     public String getHome(Model model, OAuth2AuthenticationToken authenticationToken) throws IOException {
-        if (!(authenticationToken != null && authenticationToken.isAuthenticated())) {
+        if (!isAuthenticated(authenticationToken)) {
             return "redirect:/";
-        } else {
-            String accessToken = githubService.getAccessToken(authenticationToken, "github",
-                    oauth2AuthorizedClientService);
-
-            // Obter os repositórios do usuário logado
-            GHMyself loggedUser = githubService.getUser(accessToken);
-            Collection<GHRepository> repositories;
-            System.out.println("===============" + loggedUser.getId() + "============");
-
-            try {
-                repositories = githubService.getRepositories(loggedUser);
-
-                model.addAttribute("repositories", repositories);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            // A def. do UserModel aqui é só um exemplo usando dummy
-            UserModel user = new UserModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
-                    loggedUser.getEmail(), "dummyFirstName");
-            model.addAttribute("user", user);
-
-            String user_id = String.valueOf(loggedUser.getId());
-            return "redirect:/user/" + user_id;
         }
+        return processAuthenticatedUser(model, authenticationToken);
     }
 
     @GetMapping("/contato")
@@ -76,6 +54,31 @@ public class HomeController {
     @GetMapping("/sobre")
     public String getSobre() {
         return "sobre";
+    }
+
+    private boolean isAuthenticated(OAuth2AuthenticationToken authenticationToken) {
+        return authenticationToken != null && authenticationToken.isAuthenticated();
+    }
+
+    private String processAuthenticatedUser(Model model, OAuth2AuthenticationToken authenticationToken)
+            throws IOException {
+        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+        GHMyself loggedUser = githubService.getUser(accessToken);
+        // Collection<GHRepository> repositories;
+
+        // try {
+        //     repositories = githubService.getRepositories(loggedUser);
+        //     model.addAttribute("repositories", repositories);
+        // } catch (IOException e) {
+        //     e.printStackTrace(); // Trate de forma adequada a exceção
+        // }
+
+        UserModel user = new UserModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
+                loggedUser.getEmail(), "dummyFirstName");
+        model.addAttribute("user", user);
+
+        String user_id = String.valueOf(loggedUser.getId());
+        return "redirect:/user/" + user_id;
     }
 
 }
