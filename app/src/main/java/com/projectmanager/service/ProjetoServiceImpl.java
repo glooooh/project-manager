@@ -17,4 +17,19 @@ public class ProjetoServiceImpl implements ProjetoService{
         return projetoRepository.findAll();
     }
 
+    @Override
+    public Projeto find(int id) {
+        return projetoRepository.findById(id).get();
+    }
+
+    @Override
+    public Projeto save(Projeto projeto) {
+        return projetoRepository.save(projeto);
+    }
+
+    @Override
+    public void delete(int id) {
+        projetoRepository.deleteById(id);
+    }
+
 }

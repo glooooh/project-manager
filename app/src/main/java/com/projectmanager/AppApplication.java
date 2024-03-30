@@ -22,6 +22,7 @@ public class AppApplication implements CommandLineRunner{
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
+		Demo4();
 		Demo1();
 	}
 
@@ -29,6 +30,32 @@ public class AppApplication implements CommandLineRunner{
 		for(Projeto projeto : projetoService.findAll()){
 			System.out.println("id: "+ projeto.getId());
 			System.out.println("nome: "+projeto.getNome());
+		}
+	}
+
+	private void Demo2(){
+		Projeto projeto = projetoService.find(600);
+		System.out.println("id: "+ projeto.getId());
+		System.out.println("nome: "+projeto.getNome());
+	}
+
+	private void Demo3(){
+		Projeto projeto = new Projeto();
+		projeto.setId(800);
+		projeto.setNome("Gerenciador de projetos");
+		projeto.setDescricao("Gerencia projetos");
+		projeto.setData_inicio("15/08/2009");
+		projeto.setData_fim("-");
+		projeto = projetoService.save(projeto);
+		System.out.println("Salvando " +projeto.getNome());
+	}
+
+	private void Demo4(){
+		try {
+			projetoService.delete(800);
+			System.out.println("Excluido.");
+		} catch (Exception e) {
+			System.out.println("Não excluiu");
 		}
 	}
 }
