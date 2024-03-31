@@ -22,7 +22,6 @@ public class AppApplication implements CommandLineRunner{
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
-		Demo4();
 		Demo1();
 	}
 
