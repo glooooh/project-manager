@@ -32,4 +32,9 @@ public class ProjetoServiceImpl implements ProjetoService{
         projetoRepository.deleteById(id);
     }
 
+    @Override
+    public boolean exist(int id) {
+        return projetoRepository.existsById(id);
+    }
+
 }

@@ -32,4 +32,9 @@ public class UsuarioServiceImpl implements UsuarioService{
         usuarioRepository.deleteById(id);
     }
 
+    @Override
+    public boolean exist(int id) {
+        return usuarioRepository.existsById(id);
+    }
+
 }

@@ -7,4 +7,5 @@ public interface ProjetoService {
     public Projeto find(int id);
     public Projeto save(Projeto projeto);
     public void delete(int id);
+    public boolean exist(int id);
 }
