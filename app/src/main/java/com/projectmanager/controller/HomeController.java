@@ -15,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.projectmanager.entities.Usuario;
 import com.projectmanager.model.UsuarioModel;
 import com.projectmanager.service.GithubAPIService;
+import com.projectmanager.service.UsuarioService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -29,6 +31,9 @@ public class HomeController {
     @Autowired
     private OAuth2AuthorizedClientService oauth2AuthorizedClientService; // Injete o serviço de cliente autorizado
                                                                          // OAuth2
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping("/")
     public String getIndex(OAuth2AuthenticationToken authenticationToken) {
@@ -64,20 +69,17 @@ public class HomeController {
             throws IOException {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
-        // Collection<GHRepository> repositories;
 
-        // try {
-        //     repositories = githubService.getRepositories(loggedUser);
-        //     model.addAttribute("repositories", repositories);
-        // } catch (IOException e) {
-        //     e.printStackTrace(); // Trate de forma adequada a exceção
-        // }
+        long user_id = loggedUser.getId();
+        
+        if (!usuarioService.exist((int) user_id)) {
+            Usuario usuario = new Usuario();
+            usuario.setId((int) user_id);
+            usuario.setName(loggedUser.getName());
+            usuario.setUsername(loggedUser.getLogin());
+            usuarioService.save(usuario);
+        }
 
-        UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
-                loggedUser.getEmail(), "dummyFirstName");
-        model.addAttribute("user", user);
-
-        String user_id = String.valueOf(loggedUser.getId());
         return "redirect:/user/" + user_id;
     }
 
