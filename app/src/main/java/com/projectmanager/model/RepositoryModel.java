@@ -1,5 +1,7 @@
 package com.projectmanager.model;
 
+import java.util.Set;
+
 import lombok.Data;
 
 @Data
@@ -11,17 +13,22 @@ public class RepositoryModel {
     private String description;
     private String url;
     private String language;
+    private Set<String> branches;
+    private Set<String> collaborators;
     
     public RepositoryModel() {
     }
 
-    public RepositoryModel(long id, String owner, String name, String description, String url, String language) {
+    public RepositoryModel(long id, String owner, String name, String description, String url, String language,
+            Set<String> branches, Set<String> collaborators) {
         this.id = id;
         this.owner = owner;
         this.name = name;
         this.description = description;
         this.url = url;
         this.language = language;
-    }
+        this.branches = branches;
+        this.collaborators = collaborators;
+    } 
 
 }

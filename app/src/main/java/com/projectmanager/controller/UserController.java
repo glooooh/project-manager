@@ -5,7 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.projectmanager.model.UserModel;
+import com.projectmanager.model.UsuarioModel;
 
 @Controller
 public class UserController {

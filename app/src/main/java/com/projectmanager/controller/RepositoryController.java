@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model; // Importe a classe Model
 
 import com.projectmanager.model.RepositoryModel;
-import com.projectmanager.model.UserModel;
+import com.projectmanager.model.UsuarioModel;
 import com.projectmanager.service.GithubAPIService;
 
 @Controller
@@ -37,7 +37,7 @@ public class RepositoryController {
         GHMyself user = githubService.getUser(accessToken);
 
         if (!user_id.equals(Long.toString(user.getId()))) {
-            model.addAttribute("errorMessage", "Erro ao obter informações do usuário.");
+            model.addAttribute("errorMessage", "Usuário inválido.");
             return "error";
         }
 
@@ -68,18 +68,20 @@ public class RepositoryController {
             return "error";
         }
         try {
-            UserModel user = new UserModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
+            UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
                     loggedUser.getEmail(), "dummyFirstName");
             model.addAttribute("user", user);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
+            GHRepository repo2 = loggedUser.getRepository(repoName);
+            
             model.addAttribute("repository", repo);
 
             System.out.println("hey");
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error";
         }
 
         return "repos";
