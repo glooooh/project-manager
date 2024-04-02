@@ -15,7 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.projectmanager.model.UserModel;
+import com.projectmanager.model.UsuarioModel;
 import com.projectmanager.service.GithubAPIService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,7 +73,7 @@ public class HomeController {
         //     e.printStackTrace(); // Trate de forma adequada a exceção
         // }
 
-        UserModel user = new UserModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
+        UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
                 loggedUser.getEmail(), "dummyFirstName");
         model.addAttribute("user", user);
 

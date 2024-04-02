@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 
 import com.projectmanager.model.RepositoryModel;
-import com.projectmanager.model.UserModel;
+import com.projectmanager.model.UsuarioModel;
 
 @Service
 public class GithubAPIService {
@@ -39,6 +39,7 @@ public class GithubAPIService {
         return repositories;
     }
 
+    //Gera repositoryModel
     public RepositoryModel getRepositoryModel(GHMyself user, String repoName) throws IOException {
         
         Collection<GHRepository> repositories = getRepositories(user);
@@ -52,16 +53,19 @@ public class GithubAPIService {
                 newRepo.setLanguage(oldRepo.getLanguage());
                 newRepo.setOwner(oldRepo.getOwnerName());
                 newRepo.setUrl(oldRepo.getUrl().toString());
+                newRepo.setBranches(oldRepo.getBranches().keySet());
+                newRepo.setCollaborators(oldRepo.getCollaboratorNames());
+                
             }
             //System.out.println();
         }
         return newRepo;
     }
 
-    public UserModel getUserModel(String accessToken) throws IOException {
+    public UsuarioModel getUserModel(String accessToken) throws IOException {
 
         GHMyself user = getUser(accessToken);
-        UserModel newUser = new UserModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
+        UsuarioModel newUser = new UsuarioModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
 
     return newUser;
 }
