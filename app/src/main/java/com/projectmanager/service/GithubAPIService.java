@@ -65,7 +65,9 @@ public class GithubAPIService {
 
     return newUser;
 }
-public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,OAuth2AuthorizedClientService oauth2AuthorizedClientService){
+
+    //Retorna o AccessToken do usuário a partir do token de autenticação do oauth
+    public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,OAuth2AuthorizedClientService oauth2AuthorizedClientService){
         OAuth2AuthorizedClient client = oauth2AuthorizedClientService.loadAuthorizedClient(clientRegistrationId, authenticationToken.getName());
 
         if (client != null) {
