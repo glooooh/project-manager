@@ -24,7 +24,7 @@ public class AppApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		//Demo1();
 	}
-
+/* 
 	private void Demo1(){
 		for(Projeto projeto : projetoService.findAll()){
 			System.out.println("id: "+ projeto.getId());
@@ -56,5 +56,5 @@ public class AppApplication implements CommandLineRunner{
 		} catch (Exception e) {
 			System.out.println("Não excluiu");
 		}
-	}
+	}*/
 }

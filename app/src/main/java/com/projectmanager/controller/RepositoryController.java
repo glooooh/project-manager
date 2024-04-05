@@ -73,7 +73,7 @@ public class RepositoryController {
             model.addAttribute("user", user);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
-            GHRepository repo2 = loggedUser.getRepository(repoName);
+            
             
             model.addAttribute("repository", repo);
 
