@@ -18,7 +18,7 @@ public class AppApplication implements CommandLineRunner{
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
-
+//oi
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
