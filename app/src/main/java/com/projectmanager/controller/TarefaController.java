@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.service.TarefaService;
+import com.projectmanager.service.TarefaServiceImpl;
 
 
 @Controller
@@ -26,19 +28,29 @@ public class TarefaController {
     public String getTarefa(){
         return "error";
     }
-    @GetMapping("/create")
+    @GetMapping("/new")
     public String createTarefa(){
-        return "error";
+        return "newtarefa";
     }
-    @PostMapping("/create")
-    public ResponseEntity<Tarefa> createTarefa(@PathVariable("user_id") String userId, @PathVariable("repo_id") String repoId, @RequestBody Tarefa newTarefa) {
-        TarefaService tarefaService;
+    @PostMapping("/new")
+    public String createTarefa(@RequestParam("data") String data,@RequestParam("titulo") String nome,
+    @RequestParam("descricao") String descricao) {
+    
+        System.out.println("Entrou no post");
+        System.out.println(data);
+        System.out.println(nome);
+        System.out.println(descricao);
+        TarefaService tarefaService =  new TarefaServiceImpl();
+
+        return "redirect:/";
+
+       // Tarefa createdTarefa=tarefaService.save(newTarefa);
         // Code to create a new Tarefa for the specified user and repository
         // This is just a placeholder, replace with your actual service call
         //Tarefa createdTarefa = tarefaService.createTarefa(userId, repoId, newTarefa);
         
         // Return the created Tarefa in the response
-        return new ResponseEntity<>(createdTarefa, HttpStatus.CREATED);
+       // return new ResponseEntity<>("Created tarefa", HttpStatus.CREATED);
         
     }
 

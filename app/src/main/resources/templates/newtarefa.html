@@ -1,0 +1,19 @@
+<form method="POST">
+    <label for="titulo">Título:</label>
+    <input type="text" id="titulo" name="titulo" required><br>
+
+    <label for="descricao">Descrição:</label>
+    <textarea id="descricao" name="descricao" required></textarea><br>
+
+    <label for="data">Data:</label>
+    <input type="date" id="data" name="data" required><br>
+
+    <label for="prioridade">Prioridade:</label>
+    <select id="prioridade" name="prioridade" required>
+        <option value="alta">Alta</option>
+        <option value="media">Média</option>
+        <option value="baixa">Baixa</option>
+    </select><br>
+
+    <input type="submit" value="Criar Tarefa">
+</form>
