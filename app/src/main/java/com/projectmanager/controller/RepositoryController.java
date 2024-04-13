@@ -33,14 +33,15 @@ public class RepositoryController {
 
     @GetMapping("")
     public String getUserRepositories(@PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken, Model model) {
-        GHMyself loggedUser = UserHolder.getInstance().getUser();
+        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+        GHMyself user = githubService.getUser(accessToken);
 
-        if (!user_id.equals(Long.toString(loggedUser.getId()))) {
+        if (!user_id.equals(Long.toString(user.getId()))) {
             model.addAttribute("errorMessage", "Usuário inválido.");
             return "error";
         }
 
-        
+        GHMyself loggedUser = githubService.getUser(accessToken);
         Collection<GHRepository> repositories;
         
         try {
@@ -59,7 +60,8 @@ public class RepositoryController {
     public String getRepository(@PathVariable("user_id") String user_id, @PathVariable("repo_name") String repoName,
             OAuth2AuthenticationToken authenticationToken, Model model) {
 
-        GHMyself loggedUser = UserHolder.getInstance().getUser();
+        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+        GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
 
         if (!user_id.equals(Long.toString(loggedUser.getId()))) {
             model.addAttribute("errorMessage", "Você está tentando acessar um repositório de outro usuário");
@@ -71,7 +73,11 @@ public class RepositoryController {
             model.addAttribute("user", user);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
+            
+            
             model.addAttribute("repository", repo);
+
+            System.out.println("hey");
 
         } catch (IOException e) {
             model.addAttribute("errorMessage", e.getMessage());

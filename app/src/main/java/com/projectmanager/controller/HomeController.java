@@ -69,9 +69,6 @@ public class HomeController {
             throws IOException {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
-        
-        UserHolder holder = UserHolder.getInstance();
-        holder.setUser(loggedUser);
 
         long user_id = loggedUser.getId();
         

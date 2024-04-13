@@ -17,29 +17,25 @@ import com.projectmanager.service.TarefaService;
 @RequestMapping("/user/{user_id}/repositories/{repo_id}/tarefas/")
 public class TarefaController {
 
-    //Lista de tarefas
     @GetMapping("")
-    public String getUserTarefas(){
+    public String getUserRepositoriesTarefas(){
         return "error";
     }
 
-    //Acessar tarefa especifica
     @GetMapping("/<tarefa_id>")
     public String getTarefa(){
         return "error";
     }
-
-    //Criacao de tarefa
-    @GetMapping("/new")
+    @GetMapping("/create")
     public String createTarefa(){
         return "error";
     }
-    @PostMapping("/new")
+    @PostMapping("/create")
     public ResponseEntity<Tarefa> createTarefa(@PathVariable("user_id") String userId, @PathVariable("repo_id") String repoId, @RequestBody Tarefa newTarefa) {
         TarefaService tarefaService;
         // Code to create a new Tarefa for the specified user and repository
         // This is just a placeholder, replace with your actual service call
-        Tarefa createdTarefa = new Tarefa();
+        //Tarefa createdTarefa = tarefaService.createTarefa(userId, repoId, newTarefa);
         
         // Return the created Tarefa in the response
         return new ResponseEntity<>(createdTarefa, HttpStatus.CREATED);
