@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.projectmanager.entities.Usuario;
 
@@ -59,7 +61,7 @@ public class HomeController {
     @GetMapping("/sobre")
     public String getSobre() {
         return "sobre";
-    }
+        }
 
     private boolean isAuthenticated(OAuth2AuthenticationToken authenticationToken) {
         return authenticationToken != null && authenticationToken.isAuthenticated();
