@@ -8,12 +8,13 @@
     <label for="data">Data:</label>
     <input type="date" id="data" name="data" required><br>
 
-    <label for="prioridade">Prioridade:</label>
-    <select id="prioridade" name="prioridade" required>
-        <option value="alta">Alta</option>
-        <option value="media">Média</option>
-        <option value="baixa">Baixa</option>
-    </select><br>
+    <fieldset>
+        <legend>Escolha a quem atribuir a tarefa:</legend>
 
+        <div th:each="collab : ${repo.collaborators}">
+          <input th:value="${collab}" type="checkbox" name="collaborator" checked />
+          <label th:for="${collab}"><a th:text="${collab}"></a></label>
+        </div>
+      </fieldset>
     <input type="submit" value="Criar Tarefa">
 </form>

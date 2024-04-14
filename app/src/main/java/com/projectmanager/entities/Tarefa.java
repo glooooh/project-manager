@@ -12,9 +12,8 @@ public class Tarefa {
     private String nome;
     private int id_criador;
     private String descricao;
-    private String data_termino;
     private String data_criacao;
-
+    private String data_termino;
 
     public int getId() {
         return this.id;
