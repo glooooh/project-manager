@@ -7,14 +7,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import githubService.SpringBootApplication;
 //import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
+import com.projectmanager.entities.Comentario;
 import com.projectmanager.entities.Projeto;
+import com.projectmanager.service.ComentarioService;
 import com.projectmanager.service.ProjetoService;
 
 @SpringBootApplication()
 public class AppApplication implements CommandLineRunner{
 
 	@Autowired
-	ProjetoService projetoService;
+	ComentarioService comentarioService;
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
@@ -22,39 +24,38 @@ public class AppApplication implements CommandLineRunner{
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
-		//Demo1();
+		//Demo4();
 	}
-/* 
+
+	/*
 	private void Demo1(){
-		for(Projeto projeto : projetoService.findAll()){
-			System.out.println("id: "+ projeto.getId());
-			System.out.println("nome: "+projeto.getNome());
+		for(Comentario comentario : comentarioService.findAll()){
+			System.out.println("id: "+ comentario.getId());
+			System.out.println("nome: "+comentario.getComentario());
 		}
 	}
 
 	private void Demo2(){
-		Projeto projeto = projetoService.find(600);
-		System.out.println("id: "+ projeto.getId());
-		System.out.println("nome: "+projeto.getNome());
+		Comentario comentario = comentarioService.find(600);
+		System.out.println("comentario: "+ comentario.getComentario());
 	}
 
 	private void Demo3(){
-		Projeto projeto = new Projeto();
-		projeto.setId(800);
-		projeto.setNome("Gerenciador de projetos");
-		projeto.setDescricao("Gerencia projetos");
-		projeto.setData_inicio("15/08/2009");
-		projeto.setData_fim("-");
-		projeto = projetoService.save(projeto);
-		System.out.println("Salvando " +projeto.getNome());
+		Comentario comentario = new Comentario();
+		comentario.setComentario("Este é um comentario bem bacana");
+		comentario.setEscritor(700);
+		comentario.setTarefa(500);
+		comentarioService.save(comentario);
+		System.out.println("Feito!");
 	}
 
 	private void Demo4(){
 		try {
-			projetoService.delete(800);
+			comentarioService.delete(2);
 			System.out.println("Excluido.");
 		} catch (Exception e) {
 			System.out.println("Não excluiu");
 		}
-	}*/
+	}
+	*/
 }

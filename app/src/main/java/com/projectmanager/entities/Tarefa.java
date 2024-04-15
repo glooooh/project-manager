@@ -1,6 +1,8 @@
 package com.projectmanager.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -8,12 +10,15 @@ import jakarta.persistence.Table;
 @Table(name = "tarefa")
 public class Tarefa {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nome;
+    private String titulo;
     private int id_criador;
     private String descricao;
+    private String prazo;
     private String data_criacao;
-    private String data_termino;
+    private String status;
+
 
     public int getId() {
         return this.id;
@@ -23,12 +28,12 @@ public class Tarefa {
         this.id = id;
     }
 
-    public String getNome() {
-        return this.nome;
+    public String getTitulo() {
+        return this.titulo;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
     public int getId_criador() {
@@ -47,12 +52,12 @@ public class Tarefa {
         this.descricao = descricao;
     }
 
-    public String getData_termino() {
-        return this.data_termino;
+    public String getPrazo() {
+        return this.prazo;
     }
 
-    public void setData_termino(String data_termino) {
-        this.data_termino = data_termino;
+    public void setPrazo(String prazo) {
+        this.prazo = prazo;
     }
 
     public String getData_criacao() {
@@ -62,5 +67,15 @@ public class Tarefa {
     public void setData_criacao(String data_criacao) {
         this.data_criacao = data_criacao;
     }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+
 
 }
