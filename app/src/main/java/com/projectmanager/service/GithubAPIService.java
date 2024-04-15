@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +56,21 @@ public class GithubAPIService {
                 newRepo.setUrl(oldRepo.getUrl().toString());
                 newRepo.setBranches(oldRepo.getBranches().keySet());
                 newRepo.setCollaborators(oldRepo.getCollaboratorNames());
+
                 
             }
             //System.out.println();
         }
         return newRepo;
+    }
+
+    public Long getCollaboratorId(String collaboratorName, GHRepository repo) throws IOException{
+        for (GHUser pessoa:  repo.getCollaborators()){
+            if(pessoa.getName()==collaboratorName){
+                return pessoa.getId();
+            }
+        }
+        return null;
     }
 
     public UsuarioModel getUserModel(String accessToken) throws IOException {
@@ -69,6 +80,7 @@ public class GithubAPIService {
 
     return newUser;
 }
+
 
     //Retorna o AccessToken do usuário a partir do token de autenticação do oauth
     public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,OAuth2AuthorizedClientService oauth2AuthorizedClientService){
