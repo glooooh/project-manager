@@ -84,7 +84,7 @@ public class TarefaController {
         System.out.println(collaborators);
 
         try {
-            GHRepository repo = loggedUser.getRepository(repoName);
+            GHRepository repo = githubService.getRepository(loggedUser,repoName);
             Tarefa tarefa = new Tarefa();
 		    tarefa.setPrazo(data);
             tarefa.setTitulo(nome);

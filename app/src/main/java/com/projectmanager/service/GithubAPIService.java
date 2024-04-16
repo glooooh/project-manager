@@ -39,6 +39,16 @@ public class GithubAPIService {
         Collection<GHRepository> repositories = user.getRepositories().values();
         return repositories;
     }
+    public GHRepository getRepository(GHMyself user, String repoName) throws IOException {     
+        Collection<GHRepository> repositories = getRepositories(user);
+        for (GHRepository repo: repositories){
+            if(repo.getName().equals(repoName)){
+                return repo;
+            }
+            //System.out.println();
+        }
+        return null;
+    }
 
     //Gera repositoryModel
     public RepositoryModel getRepositoryModel(GHMyself user, String repoName) throws IOException {
