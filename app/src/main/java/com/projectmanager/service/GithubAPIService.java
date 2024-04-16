@@ -75,7 +75,7 @@ public class GithubAPIService {
 
     public Long getCollaboratorId(String collaboratorName, GHRepository repo) throws IOException{
         for (GHUser pessoa:  repo.getCollaborators()){
-            if(pessoa.getName()==collaboratorName){
+            if(pessoa.getLogin().equals(collaboratorName)){
                 return pessoa.getId();
             }
         }
