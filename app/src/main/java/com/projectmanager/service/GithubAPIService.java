@@ -56,7 +56,6 @@ public class GithubAPIService {
                 newRepo.setUrl(oldRepo.getUrl().toString());
                 newRepo.setBranches(oldRepo.getBranches().keySet());
                 newRepo.setCollaborators(oldRepo.getCollaboratorNames());
-
                 
             }
             //System.out.println();
@@ -80,7 +79,6 @@ public class GithubAPIService {
 
     return newUser;
 }
-
 
     //Retorna o AccessToken do usuário a partir do token de autenticação do oauth
     public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,OAuth2AuthorizedClientService oauth2AuthorizedClientService){

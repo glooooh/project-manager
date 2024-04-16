@@ -4,6 +4,7 @@ package com.projectmanager.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.projectmanager.entities.Colaborador;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.repositories.TarefaRepository;
 
@@ -12,6 +13,8 @@ public class TarefaServiceImpl implements TarefaService{
 
     @Autowired
     TarefaRepository tarefaRepository;
+    @Autowired
+    ColaboradorService colaboradorService;
 
     @Override
     public Iterable<Tarefa> findAll() {
@@ -24,8 +27,15 @@ public class TarefaServiceImpl implements TarefaService{
     }
 
     @Override
-    public Tarefa save(Tarefa tarefa) {
-        return tarefaRepository.save(tarefa);
+    public Tarefa save(Tarefa tarefa, int usuarioid) {
+        Tarefa newTarefa = tarefaRepository.save(tarefa);
+
+        Colaborador colaborador = new Colaborador();
+        colaborador.setTarefa_id(newTarefa.getId());
+        colaborador.setUsuario_id(usuarioid);
+        colaboradorService.save(colaborador);
+        
+        return newTarefa;
     }
 
     @Override

@@ -9,14 +9,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.projectmanager.entities.Comentario;
 import com.projectmanager.entities.Projeto;
+import com.projectmanager.entities.Tarefa;
 import com.projectmanager.service.ComentarioService;
 import com.projectmanager.service.ProjetoService;
+import com.projectmanager.service.TarefaService;
 
 @SpringBootApplication()
 public class AppApplication implements CommandLineRunner{
 
 	@Autowired
-	ComentarioService comentarioService;
+	TarefaService tarefaService;
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
@@ -24,7 +26,7 @@ public class AppApplication implements CommandLineRunner{
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
-		//Demo4();
+		Demo3();
 	}
 
 	/*
@@ -39,16 +41,16 @@ public class AppApplication implements CommandLineRunner{
 		Comentario comentario = comentarioService.find(600);
 		System.out.println("comentario: "+ comentario.getComentario());
 	}
-
+	*/
 	private void Demo3(){
-		Comentario comentario = new Comentario();
-		comentario.setComentario("Este é um comentario bem bacana");
-		comentario.setEscritor(700);
-		comentario.setTarefa(500);
-		comentarioService.save(comentario);
+		Tarefa tarefa = new Tarefa();
+		tarefa.setPrazo("14/11/2024");
+        tarefa.setTitulo("Tarefa Nova");
+        tarefa.setDescricao("To só criando uma tarefa pra testar");
+		tarefaService.save(tarefa, 112330160);
 		System.out.println("Feito!");
 	}
-
+	/* 
 	private void Demo4(){
 		try {
 			comentarioService.delete(2);

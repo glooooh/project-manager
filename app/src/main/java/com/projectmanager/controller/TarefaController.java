@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -33,6 +34,9 @@ public class TarefaController {
 
     private GithubAPIService githubService;
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService; 
+
+    @Autowired
+	TarefaService tarefaService;
     
     public TarefaController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
@@ -67,12 +71,13 @@ public class TarefaController {
     public String createTarefa(OAuth2AuthenticationToken authenticationToken,@RequestParam("data") String data,
     @RequestParam("titulo") String nome,@RequestParam("descricao") String descricao,
     @RequestParam("collaborator") List<String> collaborators,@PathVariable("repo_name") String repoName) {
-        
+
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
-        
+            
         //TODO usar o username dos colaboradores ou transformar o username em id?
         System.out.println("Entrou no post");
+        System.out.println(repoName);
         System.out.println(data);
         System.out.println(nome);
         System.out.println(descricao);
@@ -80,15 +85,20 @@ public class TarefaController {
 
         try {
             GHRepository repo = loggedUser.getRepository(repoName);
-            //for pessoa in collaborator
-            //githubService.getCollaboratorId(pessoa,repo)
+            Tarefa tarefa = new Tarefa();
+		    tarefa.setPrazo(data);
+            tarefa.setTitulo(nome);
+            tarefa.setDescricao(descricao);
+            for (int i = 0; i < collaborators.size(); i++) {
+		        tarefaService.save(tarefa, githubService.getCollaboratorId(collaborators.get(i),repo).intValue());
+            }
+            System.out.println("Feito!");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        TarefaService tarefaService =  new TarefaServiceImpl();
 
-        
+        TarefaService tarefaService =  new TarefaServiceImpl();
 
         return "redirect:/";
 
