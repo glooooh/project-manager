@@ -54,12 +54,26 @@ public class HomeController {
     }
 
     @GetMapping("/contato")
-    public String getContato() {
+    public String getContato(Model model, OAuth2AuthenticationToken authenticationToken) {
+        if (isAuthenticated(authenticationToken)) {
+            // Se o usuário estiver autenticado, obtenha suas informações e adicione ao modelo
+            String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+            GHMyself loggedUser = githubService.getUser(accessToken);
+            model.addAttribute("user", loggedUser);
+        }
+        
         return "contato";
     }
 
     @GetMapping("/sobre")
-    public String getSobre() {
+    public String getSobre(Model model, OAuth2AuthenticationToken authenticationToken) {
+        if (isAuthenticated(authenticationToken)) {
+            // Se o usuário estiver autenticado, obtenha suas informações e adicione ao modelo
+            String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+            GHMyself loggedUser = githubService.getUser(accessToken);
+            model.addAttribute("user", loggedUser);
+        }
+
         return "sobre";
         }
 
