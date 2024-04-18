@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.projectmanager.entities.Comentario;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.service.GithubAPIService;
@@ -70,12 +71,12 @@ public class TarefaController {
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken,@RequestParam("data") String data,
     @RequestParam("titulo") String nome,@RequestParam("descricao") String descricao,
-    @RequestParam("collaborator") List<String> collaborators,@PathVariable("repo_name") String repoName) {
+    @RequestParam("collaborator") List<String> collaborators,@PathVariable("repo_name") String repoName,
+    @PathVariable("user_id") String userId) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
             
-        //TODO usar o username dos colaboradores ou transformar o username em id?
         System.out.println("Entrou no post");
         System.out.println(repoName);
         System.out.println(data);
@@ -94,22 +95,25 @@ public class TarefaController {
             }
             System.out.println("Feito!");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        TarefaService tarefaService =  new TarefaServiceImpl();
-
-        return "redirect:/";
-
-        // Tarefa createdTarefa=tarefaService.save(newTarefa);
-        // Code to create a new Tarefa for the specified user and repository
-        // This is just a placeholder, replace with your actual service call
-        //Tarefa createdTarefa = tarefaService.createTarefa(userId, repoId, newTarefa);
-        
-        // Return the created Tarefa in the response
-        // return new ResponseEntity<>("Created tarefa", HttpStatus.CREATED);
-        
+        String redirect = "redirect:/user/"+userId+"/repositories/"+repoName+"/tarefas/";
+        return redirect;  
     }
 
+    @GetMapping("/<tarefa_id>/comentarios")
+    public String getComentarios(Model model,@PathVariable("tarefa_id") String tarefaId){
+        //Carregar comentarios ja escritos
+
+        return "comentarios";
+    }
+
+    @PostMapping("/<tarefa_id>/comentarios")
+    public String createComentario(@PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId,
+    @PathVariable("tarefa_id") String tarefaId){
+        //Criar comentario dentro da tarefa
+
+        String redirect = "redirect:/user/"+userId+"/repositories/"+repoName+"/tarefas/"+tarefaId+"/comentarios";
+        return redirect;
+    }
 }
