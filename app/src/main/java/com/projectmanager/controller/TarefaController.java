@@ -1,10 +1,12 @@
 package com.projectmanager.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import java.util.Collection;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.projectmanager.entities.Comentario;
 import com.projectmanager.entities.Tarefa;
+import com.projectmanager.model.ComentarioModel;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.TarefaService;
@@ -50,7 +53,7 @@ public class TarefaController {
         return "error";
     }
 
-    @GetMapping("/<tarefa_id>")
+    @GetMapping("/{tarefa_id}")
     public String getTarefa(Model model){
         return "error";
     }
@@ -101,14 +104,30 @@ public class TarefaController {
         return redirect;  
     }
 
-    @GetMapping("/<tarefa_id>/comentarios")
+    @GetMapping("/{tarefa_id}/comentarios")
     public String getComentarios(Model model,@PathVariable("tarefa_id") String tarefaId){
         //Carregar comentarios ja escritos
+        //Transformar o Comentario em Comentario model
+        //Por que? Para passar pro thymeleaf com o nome do escritor em vez de o ID
+        Collection<ComentarioModel> comentarios = new ArrayList<ComentarioModel>();
+
+        //teste
+        ComentarioModel cm1 = new ComentarioModel();
+        cm1.setComentario("Nossa galera muito legal isso aqui");
+        cm1.setEscritor("Marcos1234");
+        ComentarioModel cm2 = new ComentarioModel();
+        cm2.setComentario("É verdade muito massa");
+        cm2.setEscritor("Davizaoaoao");
+        comentarios.add(cm1);
+        comentarios.add(cm2);
+        //
+
+        model.addAttribute("comentarios",comentarios);
 
         return "comentarios";
     }
 
-    @PostMapping("/<tarefa_id>/comentarios")
+    @PostMapping("/{tarefa_id}/comentarios")
     public String createComentario(@PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId,
     @PathVariable("tarefa_id") String tarefaId){
         //Criar comentario dentro da tarefa
