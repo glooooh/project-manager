@@ -14,7 +14,7 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String comentario;
-    private int escritor;
+    private String escritor;
     private int tarefa;
 
 
@@ -34,11 +34,11 @@ public class Comentario {
         this.comentario = comentario;
     }
 
-    public int getEscritor() {
+    public String getEscritor() {
         return this.escritor;
     }
 
-    public void setEscritor(int escritor) {
+    public void setEscritor(String escritor) {
         this.escritor = escritor;
     }
 

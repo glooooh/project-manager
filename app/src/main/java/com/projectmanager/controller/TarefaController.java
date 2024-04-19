@@ -27,6 +27,7 @@ import com.projectmanager.entities.Comentario;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.model.ComentarioModel;
 import com.projectmanager.model.RepositoryModel;
+import com.projectmanager.service.ComentarioService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.TarefaService;
 import com.projectmanager.service.TarefaServiceImpl;
@@ -41,6 +42,9 @@ public class TarefaController {
 
     @Autowired
 	TarefaService tarefaService;
+
+    @Autowired
+	ComentarioService comentarioService;
     
     public TarefaController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
@@ -109,9 +113,10 @@ public class TarefaController {
         //Carregar comentarios ja escritos
         //Transformar o Comentario em Comentario model
         //Por que? Para passar pro thymeleaf com o nome do escritor em vez de o ID
-        Collection<ComentarioModel> comentarios = new ArrayList<ComentarioModel>();
+        Collection<Comentario> comentarios = comentarioService.getComentarioTarefa(Integer.parseInt(tarefaId));
 
         //teste
+        /*
         ComentarioModel cm1 = new ComentarioModel();
         cm1.setComentario("Nossa galera muito legal isso aqui");
         cm1.setEscritor("Marcos1234");
@@ -120,6 +125,7 @@ public class TarefaController {
         cm2.setEscritor("Davizaoaoao");
         comentarios.add(cm1);
         comentarios.add(cm2);
+        */
         //
 
         model.addAttribute("comentarios",comentarios);
