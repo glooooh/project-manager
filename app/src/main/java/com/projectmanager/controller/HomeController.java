@@ -57,7 +57,7 @@ public class HomeController {
 
         // TODO: alterar a rota
 
-        return "redirect:/";
+        return "redirect:/user/" + getUserId(authenticationToken) + "/projects";
     }
 
     @GetMapping("/repositories")
@@ -89,10 +89,14 @@ public class HomeController {
 
     private String getUserId(OAuth2AuthenticationToken authenticationToken) {
         if (isAuthenticated(authenticationToken)) {
-            String accessToken = githubService.getAccessToken(authenticationToken, "github",
-                    oauth2AuthorizedClientService);
-            GHMyself loggedUser = githubService.getUser(accessToken);
-            return String.valueOf(loggedUser.getId());
+            try {
+                String accessToken = githubService.getAccessToken(authenticationToken, "github",
+                        oauth2AuthorizedClientService);
+                GHMyself loggedUser = githubService.getUser(accessToken);
+                return String.valueOf(loggedUser.getId());
+            } catch (Exception e) {
+                e.printStackTrace(); // Apenas para fins de depuração, substitua por um tratamento adequado
+            }
         }
         return null; // Retornar null ou algum valor padrão se o usuário não estiver autenticado
     }

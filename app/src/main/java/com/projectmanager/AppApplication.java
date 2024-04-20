@@ -20,7 +20,7 @@ import com.projectmanager.service.TarefaService;
 public class AppApplication implements CommandLineRunner{
 
 	@Autowired
-	ComentarioService comentarioService;
+	ProjetoService projetoService;
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
@@ -28,39 +28,44 @@ public class AppApplication implements CommandLineRunner{
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
-		Demo2();
+		Demo1();
 	}
 
 
 	private void Demo1(){
-		for(Comentario comentario : comentarioService.findAll()){
-			System.out.println("id: "+ comentario.getId());
-			System.out.println("nome: "+comentario.getComentario());
+		for(Projeto projeto : projetoService.findAll()){
+			System.out.println("id: "+ projeto.getId());
+			System.out.println("nome: "+projeto.getNome());
 		}
 	}
 
-	private void Demo2(){
-		Collection<Comentario> comentarios = comentarioService.getComentarioTarefa(1);
-		for(Comentario comentario : comentarios){
-			System.out.println("id: "+ comentario.getId());
-			System.out.println("usuario: "+ comentario.getEscritor());
-			System.out.println("comentario: "+comentario.getComentario());
-		}
-	}
+	// private void Demo2(){
+	// 	Collection<Comentario> comentarios = comentarioService.getComentarioTarefa(1);
+	// 	for(Comentario comentario : comentarios){
+	// 		System.out.println("id: "+ comentario.getId());
+	// 		System.out.println("usuario: "+ comentario.getEscritor());
+	// 		System.out.println("comentario: "+comentario.getComentario());
+	// 	}
+	// }
 	/*
 	private void Demo2(){
 		Comentario comentario = comentarioService.find(600);
 		System.out.println("comentario: "+ comentario.getComentario());
 	}
+	*/
+
 
 	private void Demo3(){
-		Tarefa tarefa = new Tarefa();
-		tarefa.setPrazo("14/11/2024");
-        tarefa.setTitulo("Tarefa Nova");
-        tarefa.setDescricao("To só criando uma tarefa pra testar");
-		tarefaService.save(tarefa, 112330160);
+		Projeto projeto = new Projeto();
+		projeto.setNome("Linda");
+		projeto.setId(0);
+		projeto.setDescricao("sou linda");
+		projetoService.save(projeto);
+
 		System.out.println("Feito!");
 	}
+
+	/*
 	
 	private void Demo4(){
 		try {
