@@ -1,5 +1,7 @@
 package com.projectmanager;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,7 +20,7 @@ import com.projectmanager.service.TarefaService;
 public class AppApplication implements CommandLineRunner{
 
 	@Autowired
-	TarefaService tarefaService;
+	ComentarioService comentarioService;
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
@@ -26,10 +28,10 @@ public class AppApplication implements CommandLineRunner{
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
-		//Demo3();
+		Demo2();
 	}
 
-	/*
+
 	private void Demo1(){
 		for(Comentario comentario : comentarioService.findAll()){
 			System.out.println("id: "+ comentario.getId());
@@ -37,6 +39,15 @@ public class AppApplication implements CommandLineRunner{
 		}
 	}
 
+	private void Demo2(){
+		Collection<Comentario> comentarios = comentarioService.getComentarioTarefa(1);
+		for(Comentario comentario : comentarios){
+			System.out.println("id: "+ comentario.getId());
+			System.out.println("usuario: "+ comentario.getEscritor());
+			System.out.println("comentario: "+comentario.getComentario());
+		}
+	}
+	/*
 	private void Demo2(){
 		Comentario comentario = comentarioService.find(600);
 		System.out.println("comentario: "+ comentario.getComentario());

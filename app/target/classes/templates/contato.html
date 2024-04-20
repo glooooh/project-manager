@@ -25,16 +25,11 @@
     </svg>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <div th:replace="~{fragments/general.html :: header_fragments('Contato')}"></div>
+        <div th:replace="~{fragments/nav-logged.html :: header_fragments('Contato')}"></div>
 
         <main class="px-3">
             <div id="repositoriesList">
                 <h1>Contato</h1>
-                <ul>
-                    <!-- <li th:each="repository : ${repositories}">
-                    <a th:href="${repository.url}" th:text="${repository.name}"></a>
-                </li> -->
-                </ul>
             </div>
             oi
             <!-- Conteúdo da sua página aqui -->

@@ -1,5 +1,8 @@
 package com.projectmanager.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +34,20 @@ public class ComentarioServiceImpl implements ComentarioService{
     public void delete(int id) {
         comentarioRepository.deleteById(id);
     }
+
+    @Override
+    public Collection<Comentario> getComentarioTarefa(int tarefaId) {
+        ArrayList<Comentario> comentarios = new ArrayList<>();
+        
+        for(Comentario comentario : findAll()){
+			if(comentario.getTarefa() == tarefaId){
+                comentarios.add(comentario);
+            }
+		}
+
+        return comentarios;
+    }
+
+    
 
 }
