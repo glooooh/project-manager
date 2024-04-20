@@ -32,9 +32,24 @@
             <p>ID: <span th:text="${projeto.id}"></span></p>
             <p>Nome: <span th:text="${projeto.nome}"></span></p>
             <p>Descrição: <span th:text="${projeto.descricao}"></span></p>
-          <!--   Adicione outros detalhes do repositório conforme necessário -->
+            <!--   Adicione outros detalhes do projeto conforme necessário -->
+
+            <!-- Lista de Tarefas -->
+            <h2>Tarefas do Projeto</h2>
+            <ul>
+                <li th:each="tarefa : ${tarefas}">
+                    <p>ID: <span th:text="${tarefa.id}"></span></p>
+                    <p>Título: <span th:text="${tarefa.titulo}"></span></p>
+                    <p>ID Criador: <span th:text="${tarefa.id_criador}"></span></p>
+                    <!-- Adicione outros detalhes da tarefa conforme necessário -->
+                </li>
+            </ul>
+
+            <form action="/user/{user_id}/projects/{project_id}/tasks/new" method="GET">
+                <button type="submit">Adicionar Nova Tarefa</button>
+            </form>
         </main>
-        
+
 
         <footer class="mt-auto text-white-50">
             <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a

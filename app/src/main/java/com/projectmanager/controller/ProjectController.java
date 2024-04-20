@@ -1,12 +1,8 @@
 package com.projectmanager.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.kohsuke.github.GHMyself;
-import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -18,12 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model; // Importe a classe Model
 
 import com.projectmanager.entities.Projeto;
-import com.projectmanager.model.RepositoryModel;
-import com.projectmanager.model.UsuarioModel;
-import com.projectmanager.model.ProjetoModel;
-import com.projectmanager.repositories.ProjetoRepository;
+import com.projectmanager.entities.Tarefa;
+
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.ProjetoService;
+import com.projectmanager.service.TarefaService;
 
 @Controller
 @RequestMapping("/user/{user_id}/projects")
@@ -36,6 +31,9 @@ public class ProjectController {
 	ProjetoService projetoService;
 
     @Autowired
+	TarefaService tarefaService;
+
+    @Autowired
     public ProjectController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
         this.githubService = githubService;
@@ -43,7 +41,7 @@ public class ProjectController {
     }
 
     @GetMapping("")
-    public String getUserRepositories(@PathVariable("user_id") String userId,
+    public String getUserProjects(@PathVariable("user_id") String userId,
                                       OAuth2AuthenticationToken authenticationToken,
                                       Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
@@ -57,7 +55,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{project_id}")
-    public String getRepository(@PathVariable("user_id") String user_id, @PathVariable("project_id") int projectId,
+    public String getProject(@PathVariable("user_id") String user_id, @PathVariable("project_id") int projectId,
             OAuth2AuthenticationToken authenticationToken, Model model) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
@@ -72,6 +70,10 @@ public class ProjectController {
 
         model.addAttribute("usuario", loggedUser);
         model.addAttribute("projeto", projeto);
+
+        Collection<Tarefa> tasks = (Collection<Tarefa>) tarefaService.findAll();
+
+        model.addAttribute("tarefas", tasks);
 
         return "project";
     }

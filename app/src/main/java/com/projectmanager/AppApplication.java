@@ -1,7 +1,5 @@
 package com.projectmanager;
 
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -9,18 +7,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import githubService.SpringBootApplication;
 //import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
-import com.projectmanager.entities.Comentario;
-import com.projectmanager.entities.Projeto;
 import com.projectmanager.entities.Tarefa;
-import com.projectmanager.service.ComentarioService;
-import com.projectmanager.service.ProjetoService;
 import com.projectmanager.service.TarefaService;
 
 @SpringBootApplication()
 public class AppApplication implements CommandLineRunner{
 
 	@Autowired
-	ProjetoService projetoService;
+	TarefaService tarefaService;
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
@@ -33,9 +27,9 @@ public class AppApplication implements CommandLineRunner{
 
 
 	private void Demo1(){
-		for(Projeto projeto : projetoService.findAll()){
-			System.out.println("id: "+ projeto.getId());
-			System.out.println("nome: "+projeto.getNome());
+		for(Tarefa tarefa : tarefaService.findAll()){
+			System.out.println("id: "+ tarefa.getId());
+			System.out.println("id do criador: "+tarefa.getId_criador());
 		}
 	}
 
@@ -56,11 +50,11 @@ public class AppApplication implements CommandLineRunner{
 
 
 	private void Demo3(){
-		Projeto projeto = new Projeto();
-		projeto.setNome("Linda");
-		projeto.setId(0);
-		projeto.setDescricao("sou linda");
-		projetoService.save(projeto);
+		Tarefa tarefa = new Tarefa();
+		tarefa.setTitulo("Linda");
+		tarefa.setId(0);
+		tarefa.setDescricao("sou linda");
+		tarefaService.save(tarefa, 56931444);
 
 		System.out.println("Feito!");
 	}

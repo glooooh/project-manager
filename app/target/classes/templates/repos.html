@@ -35,9 +35,29 @@
             <p>Dono: <span th:text="${repository.owner}"></span></p>
             <p>Branches: <span th:text="${repository.branches}"></span></p>
             <p>Colaboradores: <span th:text="${repository.collaborators}"></span></p>
-          <!--   Adicione outros detalhes do repositório conforme necessário -->
+            <!--   Adicione outros detalhes do repositório conforme necessário -->
+
+            <!-- Lista de Tarefas -->
+            <div th:if="${not #lists.isEmpty(tarefas)}">
+                <h2>Minhas Tarefas em <span th:text="${repository.name}"></span> </h2>
+                <ul>
+                    <li th:each="tarefa : ${tarefas}">
+                        <p>ID: <span th:text="${tarefa.id}"></span></p>
+                        <p>Título: <span th:text="${tarefa.titulo}"></span></p>
+                        <p>ID Criador: <span th:text="${tarefa.id_criador}"></span></p>
+                        <p>Descrição: <span th:text="${tarefa.descricao}"></span></p>
+                        <p>Prazo: <span th:text="${tarefa.prazo}"></span></p>
+                        <p>Data de Criação: <span th:text="${tarefa.data_criacao}"></span></p>
+                        <p>Status: <span th:text="${tarefa.status}"></span></p>
+                    </li>
+                </ul>
+            </div>
+
+            <form th:action="@{'/user/' + ${user_id} + '/repositories/' + ${repo_name} + '/tasks/new'}" method="GET">
+                <button type="submit">Adicionar Nova Tarefa</button>
+            </form>
         </main>
-        
+
 
         <footer class="mt-auto text-white-50">
             <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a

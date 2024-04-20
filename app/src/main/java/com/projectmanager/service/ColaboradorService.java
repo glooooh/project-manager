@@ -6,5 +6,5 @@ import com.projectmanager.entities.Tarefa;
 public interface ColaboradorService {
     public Iterable<Colaborador> findAll();
     public Colaborador save(Colaborador colaborador);
-    public Iterable<Tarefa> findProjectsByID(int id);
+    public Iterable<Tarefa> findTasksByID(int id);
 }

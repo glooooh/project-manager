@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.ui.Model; // Importe a classe Model
 
+import com.projectmanager.entities.Tarefa;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.model.UsuarioModel;
+import com.projectmanager.service.ColaboradorService;
 import com.projectmanager.service.GithubAPIService;
+import com.projectmanager.service.ProjetoService;
+import com.projectmanager.service.TarefaService;
 
 @Controller
 @RequestMapping("/user/{user_id}/repositories")
@@ -25,6 +30,15 @@ public class RepositoryController {
     private GithubAPIService githubService;
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
 
+    @Autowired
+	ProjetoService projetoService;
+
+    @Autowired
+	TarefaService tarefaService;
+
+    @Autowired
+	ColaboradorService colaboradorService;
+
     public RepositoryController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
         this.githubService = githubService;
@@ -32,7 +46,8 @@ public class RepositoryController {
     }
 
     @GetMapping("")
-    public String getUserRepositories(@PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken, Model model) {
+    public String getUserRepositories(@PathVariable("user_id") String user_id,
+            OAuth2AuthenticationToken authenticationToken, Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself user = githubService.getUser(accessToken);
 
@@ -43,7 +58,7 @@ public class RepositoryController {
 
         GHMyself loggedUser = githubService.getUser(accessToken);
         Collection<GHRepository> repositories;
-        
+
         try {
             repositories = githubService.getRepositories(loggedUser);
             model.addAttribute("repositories", repositories);
@@ -73,11 +88,12 @@ public class RepositoryController {
             model.addAttribute("user", user);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
-            
-            
-            model.addAttribute("repository", repo);
 
-            System.out.println("hey");
+            Collection<Tarefa> tasks = (Collection<Tarefa>) tarefaService.findAll();
+
+            model.addAttribute("tarefas", tasks);
+
+            model.addAttribute("repository", repo);
 
         } catch (IOException e) {
             model.addAttribute("errorMessage", e.getMessage());

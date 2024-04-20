@@ -27,7 +27,7 @@ public class ColaboradorServiceImpl implements ColaboradorService{
     }
 
     @Override
-    public Iterable<Tarefa> findProjectsByID(int id) {
+    public Iterable<Tarefa> findTasksByID(int id) {
         ArrayList<Tarefa> tarefas = new ArrayList<>();
         
         for(Colaborador colaborador : findAll()){
