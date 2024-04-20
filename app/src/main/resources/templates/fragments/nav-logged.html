@@ -63,16 +63,14 @@
     <div>
       <h3 class="float-md-start mb-0">Project Manager</h3>
       <nav class="nav nav-masthead justify-content-center float-md-end">
-        <a class="nav-link fw-bold py-1 px-0" th:classappend="${#strings.equals(activePage,'Home')} ? active : ''"
+        <a class="nav-link fw-bold py-1 px-0" th:classappend="${#strings.equals(activePage,'Home')} ? 'active' : ''"
           href="/">Home</a>
-        <a class="nav-link fw-bold py-1 px-0" th:classappend="${#strings.equals(activePage,'Projects')} ? active : ''"
-          th:href="@{'/user/' + ${user_id} + '/projects'}">Meus Projetos</a>
+        <a class="nav-link fw-bold py-1 px-0" th:classappend="${#strings.equals(activePage,'Projects')} ? 'active' : ''"
+          href="/projects">Meus Projetos</a>
         <a class="nav-link fw-bold py-1 px-0"
-          th:classappend="${#strings.equals(activePage,'Repositories')} ? active : ''"
-          th:href="@{'/user/' + ${user_id} + '/repositories'}">Meus Repositórios</a>
-        <a class="nav-link fw-bold py-1 px-0" th:classappend="${#strings.equals(activePage,'Contato')} ? active : ''"
-          href="/contato">Contato</a>
-        <a class="nav-link fw-bold py-1 px-0" th:classappend="${#strings.equals(activePage,'Sobre')} ? active : ''"
+          th:classappend="${#strings.equals(activePage,'Repositories')} ? 'active' : ''" href="/repositories">Meus
+          Repositórios</a>
+        <a class="nav-link fw-bold py-1 px-0" th:classappend="${#strings.equals(activePage,'Sobre')} ? 'active' : ''"
           href="/sobre">Sobre</a>
       </nav>
     </div>

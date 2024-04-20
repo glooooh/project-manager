@@ -2,8 +2,6 @@ package com.projectmanager.controller;
 
 import java.io.IOException;
 
-
-
 import org.kohsuke.github.GHMyself;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +19,6 @@ import com.projectmanager.entities.Usuario;
 
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.UsuarioService;
-
-
 
 @Controller
 public class HomeController {
@@ -53,32 +49,52 @@ public class HomeController {
         return processAuthenticatedUser(model, authenticationToken);
     }
 
-    @GetMapping("/contato")
-    public String getContato(Model model, OAuth2AuthenticationToken authenticationToken) {
-        if (isAuthenticated(authenticationToken)) {
-            // Se o usuário estiver autenticado, obtenha suas informações e adicione ao modelo
-            String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-            GHMyself loggedUser = githubService.getUser(accessToken);
-            model.addAttribute("user", loggedUser);
+    @GetMapping("/projects")
+    public String getProjects(Model model, OAuth2AuthenticationToken authenticationToken) {
+        if (!isAuthenticated(authenticationToken)) {
+            return "redirect:/";
         }
-        
-        return "contato";
+
+        // TODO: alterar a rota
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/repositories")
+    public String getRepositories(Model model, OAuth2AuthenticationToken authenticationToken) {
+        if (!isAuthenticated(authenticationToken)) {
+            return "redirect:/";
+        }
+
+        return "redirect:/user/" + getUserId(authenticationToken) + "/repositories";
     }
 
     @GetMapping("/sobre")
     public String getSobre(Model model, OAuth2AuthenticationToken authenticationToken) {
         if (isAuthenticated(authenticationToken)) {
-            // Se o usuário estiver autenticado, obtenha suas informações e adicione ao modelo
-            String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+            // Se o usuário estiver autenticado, obtenha suas informações e adicione ao
+            // modelo
+            String accessToken = githubService.getAccessToken(authenticationToken, "github",
+                    oauth2AuthorizedClientService);
             GHMyself loggedUser = githubService.getUser(accessToken);
             model.addAttribute("user", loggedUser);
         }
 
         return "sobre";
-        }
+    }
 
     private boolean isAuthenticated(OAuth2AuthenticationToken authenticationToken) {
         return authenticationToken != null && authenticationToken.isAuthenticated();
+    }
+
+    private String getUserId(OAuth2AuthenticationToken authenticationToken) {
+        if (isAuthenticated(authenticationToken)) {
+            String accessToken = githubService.getAccessToken(authenticationToken, "github",
+                    oauth2AuthorizedClientService);
+            GHMyself loggedUser = githubService.getUser(accessToken);
+            return String.valueOf(loggedUser.getId());
+        }
+        return null; // Retornar null ou algum valor padrão se o usuário não estiver autenticado
     }
 
     private String processAuthenticatedUser(Model model, OAuth2AuthenticationToken authenticationToken)
@@ -87,7 +103,7 @@ public class HomeController {
         GHMyself loggedUser = githubService.getUser(accessToken);
 
         long user_id = loggedUser.getId();
-        
+
         if (!usuarioService.exist((int) user_id)) {
             Usuario usuario = new Usuario();
             usuario.setId((int) user_id);
@@ -98,5 +114,4 @@ public class HomeController {
 
         return "redirect:/user/" + user_id;
     }
-
 }
