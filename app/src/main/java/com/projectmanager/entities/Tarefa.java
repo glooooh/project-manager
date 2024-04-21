@@ -18,6 +18,7 @@ public class Tarefa {
     private String prazo;
     private String data_criacao;
     private String status;
+    private int id_projeto;
 
 
     public int getId() {
@@ -76,6 +77,11 @@ public class Tarefa {
         this.status = status;
     }
 
+    public int getId_projeto() {
+        return this.id_projeto;
+    }
 
-
+    public void setId_projeto(int id_projeto) {
+        this.id_projeto = id_projeto;
+    }
 }

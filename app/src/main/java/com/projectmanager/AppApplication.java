@@ -30,6 +30,7 @@ public class AppApplication implements CommandLineRunner{
 		for(Tarefa tarefa : tarefaService.findAll()){
 			System.out.println("id: "+ tarefa.getId());
 			System.out.println("id do criador: "+tarefa.getId_criador());
+			System.out.println("id projeto: "+tarefa.getId_projeto());
 		}
 	}
 
