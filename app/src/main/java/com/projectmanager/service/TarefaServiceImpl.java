@@ -1,5 +1,7 @@
 package com.projectmanager.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,5 +43,18 @@ public class TarefaServiceImpl implements TarefaService{
     @Override
     public void delete(int id) {
         tarefaRepository.deleteById(id);
+    }
+
+    @Override
+    public Collection<Tarefa> getTaskByProject(int projetoid) {
+        ArrayList<Tarefa> tarefas = new ArrayList<>();
+        
+        for(Tarefa tarefa : findAll()){
+			if(tarefa.getId_projeto() == projetoid){
+                tarefas.add(tarefa);
+            }
+		}
+
+        return tarefas;
     }
 }
