@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.ui.Model; // Importe a classe Model
 
+import com.projectmanager.entities.Projeto;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.model.UsuarioModel;
 import com.projectmanager.service.ColaboradorService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.ProjetoService;
+import com.projectmanager.service.ProjetoServiceImpl;
 import com.projectmanager.service.TarefaService;
 
 @Controller
@@ -83,6 +85,7 @@ public class RepositoryController {
             return "error";
         }
         try {
+            processRepository(loggedUser, repoName);
             UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
                     loggedUser.getEmail(), "dummyFirstName");
             model.addAttribute("user", user);
@@ -101,5 +104,20 @@ public class RepositoryController {
         }
 
         return "repos";
+    }
+    
+    private void processRepository(GHMyself loggedUser, String repoName) throws IOException {
+
+        GHRepository repo = githubService.getRepository(loggedUser, repoName);
+
+        if (!projetoService.exist((int) repo.getId())) {
+            System.out.println("Criando projeto");
+            Projeto projeto = new Projeto();
+            projeto.setId((int) repo.getId());
+            projeto.setNome(repo.getName());
+            projeto.setDescricao(repo.getDescription());
+            projeto.setData_inicio(repo.getCreatedAt().toString());
+            projetoService.save(projeto);
+        }
     }
 }
