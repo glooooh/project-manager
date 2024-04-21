@@ -25,7 +25,7 @@ import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.TarefaService;
 
 @Controller
-@RequestMapping("/user/{user_id}/repositories/{repo_name}/tasks/")
+@RequestMapping("/user/{user_id}/repositories/{repo_name}/tasks")
 public class TarefaController {
 
     private GithubAPIService githubService;
@@ -44,12 +44,30 @@ public class TarefaController {
     }
 
     @GetMapping("")
-    public String getUserTarefas(Model model) {
-        return "error";
+    public String getUserTarefas(Model model, @PathVariable("repo_name") String repoName,
+    @PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken) {
+        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+        GHMyself loggedUser = githubService.getUser(accessToken);
+        GHRepository repo;
+        try {
+            repo = githubService.getRepository(loggedUser, repoName);
+            int repoId = (int) repo.getId();
+
+            Collection<Tarefa> tasks = tarefaService.getTaskByProject(repoId);
+
+            model.addAttribute("repository", repo);
+            model.addAttribute("tarefas", tasks);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return "tarefas";
     }
 
     @GetMapping("/{tarefa_id}")
     public String getTarefa(Model model) {
+
         return "error";
     }
 

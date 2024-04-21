@@ -1,6 +1,7 @@
 package com.projectmanager.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.kohsuke.github.GHMyself;
@@ -27,17 +28,19 @@ import com.projectmanager.service.TarefaService;
 @RequestMapping("/user/{user_id}/repositories")
 public class RepositoryController {
 
+    @Autowired
     private GithubAPIService githubService;
+
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
 
     @Autowired
-	ProjetoService projetoService;
+    ProjetoService projetoService;
 
     @Autowired
-	TarefaService tarefaService;
+    TarefaService tarefaService;
 
     @Autowired
-	ColaboradorService colaboradorService;
+    ColaboradorService colaboradorService;
 
     public RepositoryController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
@@ -89,11 +92,27 @@ public class RepositoryController {
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
 
-            Collection<Tarefa> tasks = (Collection<Tarefa>) tarefaService.findAll();
-
-            model.addAttribute("tarefas", tasks);
-
             model.addAttribute("repository", repo);
+
+            int repoId = (int) repo.getId();
+
+            // Collection<Tarefa> tasks_project = tarefaService.getTaskByProject(repoId);
+
+            int userIdInt = Integer.parseInt(user_id);
+
+            // Collection<Tarefa> tasks_user = (Collection<Tarefa>) colaboradorService.findTasksByID(userIdInt);
+
+            // Collection<Tarefa> tasks = new ArrayList<>();
+
+            // for (Tarefa t1 : tasks_user) {
+            //     for (Tarefa tarefa : tasks_project) {
+            //         if (t1.getId() == tarefa.getId()) {
+            //             tasks.add(tarefa);
+            //         }
+            //     }
+            // }
+
+            // model.addAttribute("tarefas", tasks);
 
         } catch (IOException e) {
             model.addAttribute("errorMessage", e.getMessage());

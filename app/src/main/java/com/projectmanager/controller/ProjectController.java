@@ -76,34 +76,24 @@ public class ProjectController {
         model.addAttribute("usuario", loggedUser);
         model.addAttribute("projeto", projeto);
 
-        Collection<Tarefa> tasks_project = new ArrayList<Tarefa>();
+        Collection<Tarefa> tasks_project = tarefaService.getTaskByProject(projectId);
 
-        for (Tarefa tarefa : tarefaService.findAll()) {
-            if (tarefa.getId_projeto() == projectId)
-                tasks_project.add(tarefa);
-        }
-
-        Collection<Colaborador> tasks_user = new ArrayList<Colaborador>();
         int userIdInt = Integer.parseInt(user_id);
-        System.out.println("USERid = "+ userIdInt);
 
-        for (Colaborador colaborador : colaboradorService.findAll()) {
-            if (colaborador.getUsuario_id() == userIdInt) {
-                tasks_user.add(colaborador);
-            }
-        }
+        Collection<Tarefa> tasks_user = (Collection<Tarefa>) colaboradorService.findTasksByID(userIdInt);
 
-        Collection<Tarefa> tasks = new ArrayList<Tarefa>();
-        for (Tarefa tarefa : tasks_project) {
-            for (Colaborador colaborador : tasks_user) {
-                if (tarefa.getId() == colaborador.getTarefa_id()) {
+        Collection<Tarefa> tasks = new ArrayList<>();
+
+        for (Tarefa colaborador : tasks_user) {
+            for (Tarefa tarefa : tasks_project) {
+                if (colaborador.getId() == tarefa.getId()) {
                     tasks.add(tarefa);
                 }
             }
         }
 
-        model.addAttribute("tarefas", tasks_project);
+        model.addAttribute("tarefas", tasks);
 
-        return "project";
+        return "repos";
     }
 }

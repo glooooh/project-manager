@@ -37,8 +37,8 @@
             <p>Colaboradores: <span th:text="${repository.collaborators}"></span></p>
             <!--   Adicione outros detalhes do repositório conforme necessário -->
 
-            <!-- Lista de Tarefas -->
-            <div th:if="${not #lists.isEmpty(tarefas)}">
+            <!-- Lista de Tarefas
+            <div >
                 <h2>Minhas Tarefas em <span th:text="${repository.name}"></span> </h2>
                 <ul>
                     <li th:each="tarefa : ${tarefas}">
@@ -52,11 +52,14 @@
                         <p>Id Projeto: <span th:text="${tarefa.id_projeto}"></span></p>
                     </li>
                 </ul>
-            </div>
+            </div> -->
 
             <form th:action="@{'/user/' + ${user_id} + '/repositories/' + ${repo_name} + '/tasks/new'}" method="GET">
                 <button type="submit">Adicionar Nova Tarefa</button>
             </form>
+
+            <!-- Botão para Ver Todas as Tarefas -->
+            <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repo_name} + '/tasks'}">Ver Todas as Tarefas</a>
         </main>
 
 
