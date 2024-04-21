@@ -103,7 +103,7 @@ public class TarefaController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tarefas/";
+        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/";
         return redirect;
     }
 
@@ -134,10 +134,21 @@ public class TarefaController {
 
     @PostMapping("/{tarefa_id}/comentarios")
     public String createComentario(@PathVariable("repo_name") String repoName, @PathVariable("user_id") String userId,
-            @PathVariable("tarefa_id") String tarefaId) {
+            @PathVariable("tarefa_id") String tarefaIdStr,@RequestParam String message) {
         // Criar comentario dentro da tarefa
+        System.out.println("Estado comentario");
+        int tarefaId = Integer.parseInt(tarefaIdStr);
+        Comentario comentario = new Comentario();
+        comentario.setTarefa(tarefaId);
+        comentario.setEscritor(userId);
+        comentario.setComentario(message);
 
-        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tarefas/" + tarefaId
+        comentarioService.save(comentario);
+
+        System.out.println(message);
+
+
+        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/" + tarefaId
                 + "/comentarios";
         return redirect;
     }
