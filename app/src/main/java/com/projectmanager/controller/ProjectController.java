@@ -1,5 +1,6 @@
 package com.projectmanager.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.kohsuke.github.GHMyself;
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.ui.Model; // Importe a classe Model
 
+import com.projectmanager.entities.Colaborador;
 import com.projectmanager.entities.Projeto;
 import com.projectmanager.entities.Tarefa;
-
+import com.projectmanager.service.ColaboradorService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.ProjetoService;
 import com.projectmanager.service.TarefaService;
@@ -26,12 +28,15 @@ public class ProjectController {
 
     private final GithubAPIService githubService;
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
-    
-    @Autowired
-	ProjetoService projetoService;
 
     @Autowired
-	TarefaService tarefaService;
+    ProjetoService projetoService;
+
+    @Autowired
+    TarefaService tarefaService;
+
+    @Autowired
+    ColaboradorService colaboradorService;
 
     @Autowired
     public ProjectController(GithubAPIService githubService,
@@ -42,11 +47,11 @@ public class ProjectController {
 
     @GetMapping("")
     public String getUserProjects(@PathVariable("user_id") String userId,
-                                      OAuth2AuthenticationToken authenticationToken,
-                                      Model model) {
+            OAuth2AuthenticationToken authenticationToken,
+            Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself user = githubService.getUser(accessToken);
-        
+
         Collection<Projeto> projects = (Collection<Projeto>) projetoService.findAll();
 
         model.addAttribute("projetos", projects);
@@ -71,9 +76,33 @@ public class ProjectController {
         model.addAttribute("usuario", loggedUser);
         model.addAttribute("projeto", projeto);
 
-        Collection<Tarefa> tasks = (Collection<Tarefa>) tarefaService.findAll();
+        Collection<Tarefa> tasks_project = new ArrayList<Tarefa>();
 
-        model.addAttribute("tarefas", tasks);
+        for (Tarefa tarefa : tarefaService.findAll()) {
+            if (tarefa.getId_projeto() == projectId)
+                tasks_project.add(tarefa);
+        }
+
+        Collection<Colaborador> tasks_user = new ArrayList<Colaborador>();
+        int userIdInt = Integer.parseInt(user_id);
+        System.out.println("USERid = "+ userIdInt);
+
+        for (Colaborador colaborador : colaboradorService.findAll()) {
+            if (colaborador.getUsuario_id() == userIdInt) {
+                tasks_user.add(colaborador);
+            }
+        }
+
+        Collection<Tarefa> tasks = new ArrayList<Tarefa>();
+        for (Tarefa tarefa : tasks_project) {
+            for (Colaborador colaborador : tasks_user) {
+                if (tarefa.getId() == colaborador.getTarefa_id()) {
+                    tasks.add(tarefa);
+                }
+            }
+        }
+
+        model.addAttribute("tarefas", tasks_project);
 
         return "project";
     }

@@ -80,7 +80,7 @@ public class TarefaController {
         GHMyself loggedUser = githubService.getUser(accessToken);
 
         // TESTE
-        
+
         /*
          * System.out.println("Entrou no post");
          * System.out.println(repoName);
@@ -92,10 +92,12 @@ public class TarefaController {
 
         try {
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
+            int repoId = (int) repo.getId(); // Obtendo o ID do repositório
             Tarefa tarefa = new Tarefa();
             tarefa.setPrazo(data);
             tarefa.setTitulo(nome);
             tarefa.setDescricao(descricao);
+            tarefa.setId_projeto(repoId);
             for (int i = 0; i < collaborators.size(); i++) {
                 tarefaService.save(tarefa, githubService.getCollaboratorId(collaborators.get(i), repo).intValue());
             }
