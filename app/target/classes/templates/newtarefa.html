@@ -6,15 +6,18 @@
     <textarea id="descricao" name="descricao" required></textarea><br>
 
     <label for="data">Data:</label>
-    <input type="date" id="data" name="data" required><br>
+    <input type="date" id="data" name="prazo" required><br>
 
     <fieldset>
         <legend>Escolha a quem atribuir a tarefa:</legend>
 
         <div th:each="collab : ${repo.collaborators}">
-          <input th:value="${collab}" type="checkbox" name="collaborator" checked />
+          <input th:value="${collab}" type="checkbox" name="collaborators" checked />
           <label th:for="${collab}"><a th:text="${collab}"></a></label>
         </div>
       </fieldset>
     <input type="submit" value="Criar Tarefa">
+    <ul th:if="${errors}">
+      <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+  </ul>
 </form>

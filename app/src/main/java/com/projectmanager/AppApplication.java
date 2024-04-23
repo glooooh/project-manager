@@ -22,10 +22,10 @@ public class AppApplication implements CommandLineRunner{
 	//Teste para verificar integração com o BD
 	@Override
 	public void run(String... args) throws Exception {
-		Demo1();
+		//Demo1();
 	}
 
-
+	/*
 	private void Demo1(){
 		for(Tarefa tarefa : tarefaService.getTaskByProject(0)){
 			System.out.println("id: "+ tarefa.getId());
@@ -42,7 +42,7 @@ public class AppApplication implements CommandLineRunner{
 	// 		System.out.println("comentario: "+comentario.getComentario());
 	// 	}
 	// }
-	/*
+	
 	private void Demo2(){
 		Comentario comentario = comentarioService.find(600);
 		System.out.println("comentario: "+ comentario.getComentario());
