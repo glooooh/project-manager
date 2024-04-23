@@ -50,7 +50,7 @@ public class GithubAPIService {
         return null;
     }
 
-    //Gera repositoryModel
+    //Gera repositoryModel a partir de um GHRepository 
     public RepositoryModel getRepositoryModel(GHMyself user, String repoName) throws IOException {
         
         Collection<GHRepository> repositories = getRepositories(user);

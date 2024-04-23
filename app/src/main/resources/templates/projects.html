@@ -32,7 +32,7 @@
                 <h1>Lista de Projetos</h1>
                 <ul>
                     <li th:each="projeto : ${projetos}">
-                        <a th:href="@{'/user/' + ${user_id} + '/projects/' + ${projeto.id}}"
+                        <a th:href="@{'/user/' + ${user_id} + '/repository/' + ${projeto.nome}}"
                             th:text="${projeto.nome}"></a>
                     </li>
                 </ul>

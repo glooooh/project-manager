@@ -1,7 +1,6 @@
 package com.projectmanager.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.kohsuke.github.GHMyself;
@@ -16,31 +15,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.ui.Model; // Importe a classe Model
 
+import com.projectmanager.entities.Projeto;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.model.UsuarioModel;
 import com.projectmanager.service.ColaboradorService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.ProjetoService;
+import com.projectmanager.service.ProjetoServiceImpl;
 import com.projectmanager.service.TarefaService;
 
 @Controller
 @RequestMapping("/user/{user_id}/repositories")
 public class RepositoryController {
 
-    @Autowired
     private GithubAPIService githubService;
-
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
 
     @Autowired
-    ProjetoService projetoService;
+	ProjetoService projetoService;
 
     @Autowired
-    TarefaService tarefaService;
+	TarefaService tarefaService;
 
     @Autowired
-    ColaboradorService colaboradorService;
+	ColaboradorService colaboradorService;
 
     public RepositoryController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
@@ -86,33 +85,18 @@ public class RepositoryController {
             return "error";
         }
         try {
+            processRepository(loggedUser, repoName);
             UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
                     loggedUser.getEmail(), "dummyFirstName");
             model.addAttribute("user", user);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
 
+            Collection<Tarefa> tasks = (Collection<Tarefa>) tarefaService.findAll();
+
+            model.addAttribute("tarefas", tasks);
+
             model.addAttribute("repository", repo);
-
-            int repoId = (int) repo.getId();
-
-            // Collection<Tarefa> tasks_project = tarefaService.getTaskByProject(repoId);
-
-            int userIdInt = Integer.parseInt(user_id);
-
-            // Collection<Tarefa> tasks_user = (Collection<Tarefa>) colaboradorService.findTasksByID(userIdInt);
-
-            // Collection<Tarefa> tasks = new ArrayList<>();
-
-            // for (Tarefa t1 : tasks_user) {
-            //     for (Tarefa tarefa : tasks_project) {
-            //         if (t1.getId() == tarefa.getId()) {
-            //             tasks.add(tarefa);
-            //         }
-            //     }
-            // }
-
-            // model.addAttribute("tarefas", tasks);
 
         } catch (IOException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -120,5 +104,20 @@ public class RepositoryController {
         }
 
         return "repos";
+    }
+    
+    private void processRepository(GHMyself loggedUser, String repoName) throws IOException {
+
+        GHRepository repo = githubService.getRepository(loggedUser, repoName);
+
+        if (!projetoService.exist((int) repo.getId())) {
+            System.out.println("Criando projeto");
+            Projeto projeto = new Projeto();
+            projeto.setId((int) repo.getId());
+            projeto.setNome(repo.getName());
+            projeto.setDescricao(repo.getDescription());
+            projeto.setData_inicio(repo.getCreatedAt().toString());
+            projetoService.save(projeto);
+        }
     }
 }

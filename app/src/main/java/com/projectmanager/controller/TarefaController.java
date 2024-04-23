@@ -46,6 +46,7 @@ public class TarefaController {
     @GetMapping("")
     public String getUserTarefas(Model model, @PathVariable("repo_name") String repoName,
     @PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken) {
+        System.out.println("tarefas");
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
         GHRepository repo;
@@ -57,17 +58,16 @@ public class TarefaController {
 
             model.addAttribute("repository", repo);
             model.addAttribute("tarefas", tasks);
+            
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
 
         return "tarefas";
     }
-
     @GetMapping("/{tarefa_id}")
     public String getTarefa(Model model) {
-
         return "error";
     }
 
@@ -98,7 +98,7 @@ public class TarefaController {
         GHMyself loggedUser = githubService.getUser(accessToken);
 
         // TESTE
-
+        
         /*
          * System.out.println("Entrou no post");
          * System.out.println(repoName);
@@ -108,7 +108,7 @@ public class TarefaController {
          * System.out.println(collaborators);
          */
 
-        try {
+         try {
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
             int repoId = (int) repo.getId(); // Obtendo o ID do repositório
             Tarefa tarefa = new Tarefa();
@@ -119,11 +119,10 @@ public class TarefaController {
             for (int i = 0; i < collaborators.size(); i++) {
                 tarefaService.save(tarefa, githubService.getCollaboratorId(collaborators.get(i), repo).intValue());
             }
-            System.out.println("Feito!");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tarefas/";
+        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/";
         return redirect;
     }
 
@@ -154,10 +153,21 @@ public class TarefaController {
 
     @PostMapping("/{tarefa_id}/comentarios")
     public String createComentario(@PathVariable("repo_name") String repoName, @PathVariable("user_id") String userId,
-            @PathVariable("tarefa_id") String tarefaId) {
+            @PathVariable("tarefa_id") String tarefaIdStr,@RequestParam String message) {
         // Criar comentario dentro da tarefa
+        System.out.println("Estado comentario");
+        int tarefaId = Integer.parseInt(tarefaIdStr);
+        Comentario comentario = new Comentario();
+        comentario.setTarefa(tarefaId);
+        comentario.setEscritor(userId);
+        comentario.setComentario(message);
 
-        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tarefas/" + tarefaId
+        comentarioService.save(comentario);
+
+        System.out.println(message);
+
+
+        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/" + tarefaId
                 + "/comentarios";
         return redirect;
     }
