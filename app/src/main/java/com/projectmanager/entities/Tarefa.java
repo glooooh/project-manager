@@ -1,5 +1,7 @@
 package com.projectmanager.entities;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +21,6 @@ public class Tarefa {
     private String data_criacao;
     private String status;
     private int id_projeto;
-
 
     public int getId() {
         return this.id;

@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.projectmanager.entities.Comentario;
 import com.projectmanager.entities.Tarefa;
+import com.projectmanager.forms.TarefaForm;
 import com.projectmanager.model.RepositoryModel;
+import com.projectmanager.model.TarefaModel;
 import com.projectmanager.service.ComentarioService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.TarefaService;
@@ -81,21 +84,19 @@ public class TarefaController {
             model.addAttribute("repo", repo);
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return "error";
         }
 
         return "newtarefa";
     }
 
     @PostMapping("/new")
-    public String createTarefa(OAuth2AuthenticationToken authenticationToken, @RequestParam("data") String data,
-            @RequestParam("titulo") String nome, @RequestParam("descricao") String descricao,
-            @RequestParam("collaborator") List<String> collaborators, @PathVariable("repo_name") String repoName,
-            @PathVariable("user_id") String userId) {
+    public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
+     @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
+        System.out.println(novaTarefa.toString());
 
         // TESTE
         
@@ -106,7 +107,7 @@ public class TarefaController {
          * System.out.println(nome);
          * System.out.println(descricao);
          * System.out.println(collaborators);
-         */
+         
 
          try {
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
@@ -121,8 +122,8 @@ public class TarefaController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/";
+        }*/
+        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks";
         return redirect;
     }
 
