@@ -1,0 +1,51 @@
+<!-- Modal -->
+<div th:fragment="modal_form_tarefa(repository, user_id, repo_name)" class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalNewTaskLabel">Formulário de Tarefa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <!-- Your form content goes here -->
+            <form th:action="@{'/user/' + ${user_id} + '/repositories/' + ${repo_name} + '/tasks/new'}" method="POST" class="row g-3 needs-validation" novalidate>
+                <div class="col-md-6 ">
+                    <label for="titulo" class="form-label">Título</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Título" required>
+                </div>
+
+                <div class="col-md-6 ">
+                    <label for="data" class="form-label">Data:</label>
+                    <input type="date" class="form-control" id="data" name="prazo" placeholder="Selecione uma data"
+                        required>
+                </div>
+
+                <div class="col-12">
+                    <label for="descricao" class="form-label">Descrição</label>
+                    <textarea type="text" class="form-control" id="descricao" name="descricao"
+                        placeholder="A tarefa consiste em..."> </textarea>
+                </div>
+
+                <div class="col-12">
+                    <fieldset class="border p-2">
+                        <legend class="">Escolha a quem atribuir a tarefa:</legend>
+                        <div th:each="collab : ${repository.collaborators}" class="form-check form-check-inline">
+                            <input th:value="${collab}" th:id="${collab}" type="checkbox" name="collaborators"
+                                class="btn-check" checked autocomplete="off">
+                            <label th:for="${collab}" class="btn btn-outline-primary">
+                                <span th:text="${collab}"></span>
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Criar Tarefa</button>
+                </div>
+
+                <ul th:if="${errors}">
+                    <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>

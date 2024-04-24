@@ -33,13 +33,13 @@ public class RepositoryController {
     private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
 
     @Autowired
-	ProjetoService projetoService;
+    ProjetoService projetoService;
 
     @Autowired
-	TarefaService tarefaService;
+    TarefaService tarefaService;
 
     @Autowired
-	ColaboradorService colaboradorService;
+    ColaboradorService colaboradorService;
 
     public RepositoryController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
@@ -89,6 +89,7 @@ public class RepositoryController {
             UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
                     loggedUser.getEmail(), "dummyFirstName");
             model.addAttribute("user", user);
+            model.addAttribute("repo_name", repoName);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
 
@@ -105,7 +106,7 @@ public class RepositoryController {
 
         return "repos";
     }
-    
+
     private void processRepository(GHMyself loggedUser, String repoName) throws IOException {
 
         GHRepository repo = githubService.getRepository(loggedUser, repoName);

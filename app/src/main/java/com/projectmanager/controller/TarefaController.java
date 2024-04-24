@@ -74,21 +74,21 @@ public class TarefaController {
         return "error";
     }
 
-    @GetMapping("/new")
-    public String createTarefa(Model model, OAuth2AuthenticationToken authenticationToken,
-            @PathVariable("repo_name") String repoName) {
-        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken);
-        try {
-            RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);
-            model.addAttribute("repo", repo);
+    // @GetMapping("/new")
+    // public String createTarefa(Model model, OAuth2AuthenticationToken authenticationToken,
+    //         @PathVariable("repo_name") String repoName) {
+    //     String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+    //     GHMyself loggedUser = githubService.getUser(accessToken);
+    //     try {
+    //         RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);
+    //         model.addAttribute("repo", repo);
 
-        } catch (IOException e) {
-            return "error";
-        }
+    //     } catch (IOException e) {
+    //         return "error";
+    //     }
 
-        return "newtarefa";
-    }
+    //     return "newtarefa";
+    // }
 
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
@@ -100,15 +100,7 @@ public class TarefaController {
 
         // TESTE
         
-        /*
-         * System.out.println("Entrou no post");
-         * System.out.println(repoName);
-         * System.out.println(data);
-         * System.out.println(nome);
-         * System.out.println(descricao);
-         * System.out.println(collaborators);
-         
-
+        /*        
          try {
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
             int repoId = (int) repo.getId(); // Obtendo o ID do repositório
@@ -123,6 +115,7 @@ public class TarefaController {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
+
         String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks";
         return redirect;
     }
