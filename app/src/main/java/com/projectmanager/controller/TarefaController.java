@@ -59,7 +59,10 @@ public class TarefaController {
 
             Collection<Tarefa> tasks = tarefaService.getTaskByProject(repoId);
 
-            model.addAttribute("repository", repo);
+            RepositoryModel repository = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
+
+            model.addAttribute("repository", repository);
+            model.addAttribute("user_id", user_id);
             model.addAttribute("tarefas", tasks);
             
         } catch (IOException e) {
