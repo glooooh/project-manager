@@ -79,47 +79,4 @@ public class ProjectController {
 
         return "repositories"; // Supondo que "projects" seja o nome da sua página de projetos
     }
-
-    // @GetMapping("/{project_id}")
-    // public String getProject(@PathVariable("user_id") String user_id,
-    // @PathVariable("project_id") int projectId,
-    // OAuth2AuthenticationToken authenticationToken, Model model) {
-
-    // String accessToken = githubService.getAccessToken(authenticationToken,
-    // "github", oauth2AuthorizedClientService);
-    // GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do
-    // usuario
-
-    // if (!user_id.equals(Long.toString(loggedUser.getId()))) {
-    // model.addAttribute("errorMessage", "Você está tentando acessar um projeto de
-    // outro usuário");
-    // return "error";
-    // }
-
-    // Projeto projeto = projetoService.find(projectId);
-
-    // model.addAttribute("usuario", loggedUser);
-    // model.addAttribute("projeto", projeto);
-
-    // Collection<Tarefa> tasks_project = tarefaService.getTaskByProject(projectId);
-
-    // int userIdInt = Integer.parseInt(user_id);
-
-    // Collection<Tarefa> tasks_user = (Collection<Tarefa>)
-    // colaboradorService.findTasksByID(userIdInt);
-
-    // Collection<Tarefa> tasks = new ArrayList<>();
-
-    // for (Tarefa colaborador : tasks_user) {
-    // for (Tarefa tarefa : tasks_project) {
-    // if (colaborador.getId() == tarefa.getId()) {
-    // tasks.add(tarefa);
-    // }
-    // }
-    // }
-
-    // model.addAttribute("tarefas", tasks);
-
-    // return "repos";
-    // }
 }
