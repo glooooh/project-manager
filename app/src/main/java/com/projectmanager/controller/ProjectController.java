@@ -1,9 +1,11 @@
 package com.projectmanager.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.kohsuke.github.GHMyself;
+import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -50,50 +52,74 @@ public class ProjectController {
             OAuth2AuthenticationToken authenticationToken,
             Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself user = githubService.getUser(accessToken);
+        GHMyself loggedUser = githubService.getUser(accessToken);
 
-        Collection<Projeto> projects = (Collection<Projeto>) projetoService.findAll();
+        // Obter todos os repositórios do usuário no GitHub
+        Collection<GHRepository> repositories;
 
-        model.addAttribute("projetos", projects);
+        Collection<GHRepository> projects = new ArrayList<>();
+        try {
+            repositories = githubService.getRepositories(loggedUser);
 
-        return "projects"; // Supondo que "projects" seja o nome da sua página de projetos
-    }
-
-    @GetMapping("/{project_id}")
-    public String getProject(@PathVariable("user_id") String user_id, @PathVariable("project_id") int projectId,
-            OAuth2AuthenticationToken authenticationToken, Model model) {
-
-        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
-
-        if (!user_id.equals(Long.toString(loggedUser.getId()))) {
-            model.addAttribute("errorMessage", "Você está tentando acessar um projeto de outro usuário");
-            return "error";
-        }
-
-        Projeto projeto = projetoService.find(projectId);
-
-        model.addAttribute("usuario", loggedUser);
-        model.addAttribute("projeto", projeto);
-
-        Collection<Tarefa> tasks_project = tarefaService.getTaskByProject(projectId);
-
-        int userIdInt = Integer.parseInt(user_id);
-
-        Collection<Tarefa> tasks_user = (Collection<Tarefa>) colaboradorService.findTasksByID(userIdInt);
-
-        Collection<Tarefa> tasks = new ArrayList<>();
-
-        for (Tarefa colaborador : tasks_user) {
-            for (Tarefa tarefa : tasks_project) {
-                if (colaborador.getId() == tarefa.getId()) {
-                    tasks.add(tarefa);
+            for (Projeto projeto : projetoService.findAll()) {
+                for (GHRepository repo : repositories) {
+                    if (repo.getName().equals(projeto.getNome())) {
+                        projects.add(repo);
+                        break;
+                    }
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        model.addAttribute("tarefas", tasks);
+        model.addAttribute("objeto_da_lista", "Projects");
 
-        return "repos";
+        model.addAttribute("repositories", projects);
+
+        return "repositories"; // Supondo que "projects" seja o nome da sua página de projetos
     }
+
+    // @GetMapping("/{project_id}")
+    // public String getProject(@PathVariable("user_id") String user_id,
+    // @PathVariable("project_id") int projectId,
+    // OAuth2AuthenticationToken authenticationToken, Model model) {
+
+    // String accessToken = githubService.getAccessToken(authenticationToken,
+    // "github", oauth2AuthorizedClientService);
+    // GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do
+    // usuario
+
+    // if (!user_id.equals(Long.toString(loggedUser.getId()))) {
+    // model.addAttribute("errorMessage", "Você está tentando acessar um projeto de
+    // outro usuário");
+    // return "error";
+    // }
+
+    // Projeto projeto = projetoService.find(projectId);
+
+    // model.addAttribute("usuario", loggedUser);
+    // model.addAttribute("projeto", projeto);
+
+    // Collection<Tarefa> tasks_project = tarefaService.getTaskByProject(projectId);
+
+    // int userIdInt = Integer.parseInt(user_id);
+
+    // Collection<Tarefa> tasks_user = (Collection<Tarefa>)
+    // colaboradorService.findTasksByID(userIdInt);
+
+    // Collection<Tarefa> tasks = new ArrayList<>();
+
+    // for (Tarefa colaborador : tasks_user) {
+    // for (Tarefa tarefa : tasks_project) {
+    // if (colaborador.getId() == tarefa.getId()) {
+    // tasks.add(tarefa);
+    // }
+    // }
+    // }
+
+    // model.addAttribute("tarefas", tasks);
+
+    // return "repos";
+    // }
 }

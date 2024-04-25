@@ -51,14 +51,13 @@ public class RepositoryController {
     public String getUserRepositories(@PathVariable("user_id") String user_id,
             OAuth2AuthenticationToken authenticationToken, Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself user = githubService.getUser(accessToken);
+        GHMyself loggedUser = githubService.getUser(accessToken);
 
-        if (!user_id.equals(Long.toString(user.getId()))) {
+        if (!user_id.equals(Long.toString(loggedUser.getId()))) {
             model.addAttribute("errorMessage", "Usuário inválido.");
             return "error";
         }
 
-        GHMyself loggedUser = githubService.getUser(accessToken);
         Collection<GHRepository> repositories;
 
         try {
@@ -68,6 +67,8 @@ public class RepositoryController {
             model.addAttribute("errorMessage", "Erro ao obter os repositórios do usuário: " + e.getMessage());
             return "error";
         }
+
+        model.addAttribute("objeto_da_lista", "Repositories");
 
         return "repositories";
     }
