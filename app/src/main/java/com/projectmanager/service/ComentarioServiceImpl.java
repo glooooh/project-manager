@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.projectmanager.entities.Comentario;
+import com.projectmanager.model.ComentarioModel;
 import com.projectmanager.repositories.ComentarioRepository;
 
 @Service("comentarioService")
@@ -14,6 +15,9 @@ public class ComentarioServiceImpl implements ComentarioService{
 
     @Autowired
     private ComentarioRepository comentarioRepository;
+
+    @Autowired
+    private UsuarioServiceImpl usuarioService;
 
     @Override
     public Iterable<Comentario> findAll() {
@@ -36,14 +40,23 @@ public class ComentarioServiceImpl implements ComentarioService{
     }
 
     @Override
-    public Collection<Comentario> getComentarioTarefa(int tarefaId) {
-        ArrayList<Comentario> comentarios = new ArrayList<>();
+    public Collection<ComentarioModel> getComentarioTarefa(int tarefaId) {
+        ArrayList<ComentarioModel> comentarios = new ArrayList<>();
+        ComentarioModel novoComentario = new ComentarioModel();
         
         for(Comentario comentario : findAll()){
-			if(comentario.getTarefa() == tarefaId){
-                comentarios.add(comentario);
+            if(comentario.getTarefa() == tarefaId){
+                novoComentario.setId(comentario.getId());
+                novoComentario.setComentario(comentario.getComentario());
+                try {
+                    novoComentario.setEscritor(usuarioService.find(Integer.parseInt(comentario.getEscritor())).getUsername());
+                } catch (Exception e) {
+                    novoComentario.setEscritor(comentario.getEscritor());
+                }
+                
+                comentarios.add(novoComentario);
             }
-		}
+        }
 
         return comentarios;
     }

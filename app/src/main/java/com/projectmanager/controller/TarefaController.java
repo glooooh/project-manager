@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.projectmanager.entities.Comentario;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.forms.TarefaForm;
+import com.projectmanager.model.ComentarioModel;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.model.TarefaModel;
 import com.projectmanager.service.ComentarioService;
@@ -49,27 +50,23 @@ public class TarefaController {
     @GetMapping("")
     public String getUserTarefas(Model model, @PathVariable("repo_name") String repoName,
     @PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken) {
-        System.out.println("tarefas");
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
-        GHRepository repo;
+        
+        model.addAttribute("user_id", user_id);
+        
         try {
-            repo = githubService.getRepository(loggedUser, repoName);
+            GHRepository repo = githubService.getRepository(loggedUser, repoName);
             int repoId = (int) repo.getId();
-
-            Collection<Tarefa> tasks = tarefaService.getTaskByProject(repoId);
+            Collection<Tarefa> tasks = tarefaService.getTaskByProject(repoId); //TODO pegar tarefas só do usuário?
+            model.addAttribute("tarefas", tasks);
 
             RepositoryModel repository = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
-
             model.addAttribute("repository", repository);
-            model.addAttribute("user_id", user_id);
-            model.addAttribute("tarefas", tasks);
-            
         } catch (IOException e) {
             
             e.printStackTrace();
         }
-
         return "tarefas";
     }
     @GetMapping("/{tarefa_id}")
@@ -95,7 +92,7 @@ public class TarefaController {
 
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-     @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) {
+    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
@@ -103,7 +100,7 @@ public class TarefaController {
 
         // TESTE
         
-        /*        
+        /* TODO passar pro service       
          try {
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
             int repoId = (int) repo.getId(); // Obtendo o ID do repositório
@@ -125,24 +122,8 @@ public class TarefaController {
 
     @GetMapping("/{tarefa_id}/comentarios")
     public String getComentarios(Model model, @PathVariable("tarefa_id") String tarefaId) {
-        // Carregar comentarios ja escritos
-        // Transformar o Comentario em Comentario model
-        // Por que? Para passar pro thymeleaf com o nome do escritor em vez de o ID
-        Collection<Comentario> comentarios = comentarioService.getComentarioTarefa(Integer.parseInt(tarefaId));
 
-        // teste
-        /*
-         * ComentarioModel cm1 = new ComentarioModel();
-         * cm1.setComentario("Nossa galera muito legal isso aqui");
-         * cm1.setEscritor("Marcos1234");
-         * ComentarioModel cm2 = new ComentarioModel();
-         * cm2.setComentario("É verdade muito massa");
-         * cm2.setEscritor("Davizaoaoao");
-         * comentarios.add(cm1);
-         * comentarios.add(cm2);
-         */
-        //
-
+        Collection<ComentarioModel> comentarios = comentarioService.getComentarioTarefa(Integer.parseInt(tarefaId));
         model.addAttribute("comentarios", comentarios);
 
         return "comentarios";
@@ -154,6 +135,7 @@ public class TarefaController {
         // Criar comentario dentro da tarefa
         System.out.println("Estado comentario");
         int tarefaId = Integer.parseInt(tarefaIdStr);
+        //TODO passar pro service
         Comentario comentario = new Comentario();
         comentario.setTarefa(tarefaId);
         comentario.setEscritor(userId);

@@ -53,23 +53,20 @@ public class RepositoryController {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
 
+        //Verifica se o usuário logado está acessando a própria página
         if (!user_id.equals(Long.toString(loggedUser.getId()))) {
             model.addAttribute("errorMessage", "Usuário inválido.");
             return "error";
         }
-
-        Collection<GHRepository> repositories;
-
+        // Obter todos os repositórios do usuário no GitHub
         try {
-            repositories = githubService.getRepositories(loggedUser);
+            Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
             model.addAttribute("repositories", repositories);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Erro ao obter os repositórios do usuário: " + e.getMessage());
             return "error";
         }
-
         model.addAttribute("objeto_da_lista", "Repositories");
-
         return "repositories";
     }
 
@@ -81,22 +78,17 @@ public class RepositoryController {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
 
-        if (!user_id.equals(Long.toString(loggedUser.getId()))) {
+        if (!user_id.equals(Long.toString(loggedUser.getId()))) { //TODO Transformar em funcao de validacao?
             model.addAttribute("errorMessage", "Você está tentando acessar um repositório de outro usuário");
             return "error";
         }
         try {
-            processRepository(loggedUser, repoName);
+            processRepository(loggedUser, repoName); //TODO Transformar em função do repositoryService
             UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
                     loggedUser.getEmail(), "dummyFirstName");
             model.addAttribute("user", user);
-            model.addAttribute("repo_name", repoName);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
-
-            Collection<Tarefa> tasks = (Collection<Tarefa>) tarefaService.findAll();
-
-            model.addAttribute("tarefas", tasks);
 
             model.addAttribute("repository", repo);
 
