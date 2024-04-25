@@ -105,7 +105,7 @@ public class RepositoryController {
             return "error";
         }
 
-        return "repos";
+        return "project";
     }
 
     private void processRepository(GHMyself loggedUser, String repoName) throws IOException {
