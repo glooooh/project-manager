@@ -104,14 +104,6 @@ public class RepositoryController {
 
         GHRepository repo = githubService.getRepository(loggedUser, repoName);
 
-        if (!projetoService.exist((int) repo.getId())) {
-            System.out.println("Criando projeto");
-            Projeto projeto = new Projeto();
-            projeto.setId((int) repo.getId());
-            projeto.setNome(repo.getName());
-            projeto.setDescricao(repo.getDescription());
-            projeto.setData_inicio(repo.getCreatedAt().toString());
-            projetoService.save(projeto);
-        }
+        projetoService.save(repo);
     }
 }
