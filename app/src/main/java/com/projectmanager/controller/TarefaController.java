@@ -123,19 +123,13 @@ public class TarefaController {
             @PathVariable("tarefa_id") String tarefaIdStr,@RequestParam String message) {
         // Criar comentario dentro da tarefa
         System.out.println("Estado comentario");
-        int tarefaId = Integer.parseInt(tarefaIdStr);
-        //TODO passar pro service
-        Comentario comentario = new Comentario();
-        comentario.setTarefa(tarefaId);
-        comentario.setEscritor(userId);
-        comentario.setComentario(message);
 
-        comentarioService.save(comentario);
+        comentarioService.save(Integer.parseInt(tarefaIdStr), userId, message);
 
         System.out.println(message);
 
 
-        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/" + tarefaId
+        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/" + tarefaIdStr
                 + "/comentarios";
         return redirect;
     }

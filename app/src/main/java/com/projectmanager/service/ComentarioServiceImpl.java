@@ -30,7 +30,12 @@ public class ComentarioServiceImpl implements ComentarioService{
     }
 
     @Override
-    public Comentario save(Comentario comentario) {
+    public Comentario save(int tarefaId, String userId, String message) {
+        Comentario comentario = new Comentario();
+        comentario.setTarefa(tarefaId);
+        comentario.setEscritor(userId);
+        comentario.setComentario(message);
+        
         return comentarioRepository.save(comentario);
     }
 

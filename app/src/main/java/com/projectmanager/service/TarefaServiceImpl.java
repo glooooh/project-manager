@@ -40,6 +40,7 @@ public class TarefaServiceImpl implements TarefaService{
         newTarefa.setTitulo(tarefaForm.getTitulo());
         newTarefa.setDescricao(tarefaForm.getDescricao());
         newTarefa.setPrazo(tarefaForm.getPrazo());
+        newTarefa.setId_projeto((int) repo.getId());
 
         tarefaRepository.save(newTarefa);
         
