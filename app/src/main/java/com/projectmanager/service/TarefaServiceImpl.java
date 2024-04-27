@@ -1,13 +1,16 @@
 package com.projectmanager.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.projectmanager.entities.Colaborador;
 import com.projectmanager.entities.Tarefa;
+import com.projectmanager.forms.TarefaForm;
 import com.projectmanager.repositories.TarefaRepository;
 
 @Service("TarefaService")
@@ -29,13 +32,29 @@ public class TarefaServiceImpl implements TarefaService{
     }
 
     @Override
-    public Tarefa save(Tarefa tarefa, int usuarioid) {
-        Tarefa newTarefa = tarefaRepository.save(tarefa);
-
+    public Tarefa save(TarefaForm tarefaForm, int usuarioid, GHRepository repo) {
+        
         Colaborador colaborador = new Colaborador();
+
+        Tarefa newTarefa = new Tarefa();
+        newTarefa.setTitulo(tarefaForm.getTitulo());
+        newTarefa.setDescricao(tarefaForm.getDescricao());
+        newTarefa.setPrazo(tarefaForm.getPrazo());
+
+        tarefaRepository.save(newTarefa);
+        
         colaborador.setTarefa_id(newTarefa.getId());
-        colaborador.setUsuario_id(usuarioid);
-        colaboradorService.save(colaborador);
+        
+        try {
+            int repoId = (int) repo.getId(); // Obtendo o ID do repositório
+
+            for (int i = 0; i < repo.getCollaborators().size(); i++) {
+                colaborador.setUsuario_id(usuarioid);
+                colaboradorService.save(colaborador);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
         return newTarefa;
     }

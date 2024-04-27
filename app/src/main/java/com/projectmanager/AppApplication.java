@@ -47,7 +47,6 @@ public class AppApplication implements CommandLineRunner{
 		Comentario comentario = comentarioService.find(600);
 		System.out.println("comentario: "+ comentario.getComentario());
 	}
-	*/
 
 
 	private void Demo3(){
@@ -59,8 +58,6 @@ public class AppApplication implements CommandLineRunner{
 
 		System.out.println("Feito!");
 	}
-
-	/*
 	
 	private void Demo4(){
 		try {

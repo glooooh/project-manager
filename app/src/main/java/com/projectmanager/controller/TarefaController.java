@@ -92,30 +92,17 @@ public class TarefaController {
 
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) {
+    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) throws IOException {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
         System.out.println(novaTarefa.toString());
-
-        // TESTE
+               
+         
+        GHRepository repo = githubService.getRepository(loggedUser, repoName);
+        tarefaService.save(novaTarefa, Integer.parseInt(userId), repo);
         
-        /* TODO passar pro service       
-         try {
-            GHRepository repo = githubService.getRepository(loggedUser, repoName);
-            int repoId = (int) repo.getId(); // Obtendo o ID do repositório
-            Tarefa tarefa = new Tarefa();
-            tarefa.setPrazo(data);
-            tarefa.setTitulo(nome);
-            tarefa.setDescricao(descricao);
-            tarefa.setId_projeto(repoId);
-            for (int i = 0; i < collaborators.size(); i++) {
-                tarefaService.save(tarefa, githubService.getCollaboratorId(collaborators.get(i), repo).intValue());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
+        
         String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks";
         return redirect;
     }
