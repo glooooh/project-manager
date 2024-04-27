@@ -1,10 +1,14 @@
 package com.projectmanager.service;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
+import org.kohsuke.github.GHPersonSet;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +40,16 @@ public class TarefaServiceImpl implements TarefaService{
         
         Colaborador colaborador = new Colaborador();
 
+        Date data = new Date();
+        SimpleDateFormat formatador = new SimpleDateFormat("yyyy-MM-dd");
+
         Tarefa newTarefa = new Tarefa();
         newTarefa.setTitulo(tarefaForm.getTitulo());
         newTarefa.setDescricao(tarefaForm.getDescricao());
         newTarefa.setPrazo(tarefaForm.getPrazo());
+        newTarefa.setId_criador(usuarioid);
         newTarefa.setId_projeto((int) repo.getId());
+        newTarefa.setData_criacao(formatador.format(data));
 
         tarefaRepository.save(newTarefa);
         
@@ -49,8 +58,8 @@ public class TarefaServiceImpl implements TarefaService{
         try {
             int repoId = (int) repo.getId(); // Obtendo o ID do repositório
 
-            for (int i = 0; i < repo.getCollaborators().size(); i++) {
-                colaborador.setUsuario_id(usuarioid);
+            for (GHUser user : repo.getCollaborators()) {
+                colaborador.setUsuario_id((int) user.getId());
                 colaboradorService.save(colaborador);
             }
         } catch (IOException e) {
