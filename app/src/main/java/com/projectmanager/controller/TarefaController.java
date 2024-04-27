@@ -92,16 +92,18 @@ public class TarefaController {
 
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) throws IOException {
+    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
         System.out.println(novaTarefa.toString());
                
-         
-        GHRepository repo = githubService.getRepository(loggedUser, repoName);
-        tarefaService.save(novaTarefa, Integer.parseInt(userId), repo);
-        
+        try {
+            GHRepository repo = githubService.getRepository(loggedUser, repoName);
+            tarefaService.save(novaTarefa, Integer.parseInt(userId), repo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
         String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks";
         return redirect;
