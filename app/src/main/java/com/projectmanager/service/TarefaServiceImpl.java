@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHPersonSet;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
@@ -56,7 +57,7 @@ public class TarefaServiceImpl implements TarefaService{
         colaborador.setTarefa_id(newTarefa.getId());
         
         try {
-            int repoId = (int) repo.getId(); // Obtendo o ID do repositório
+            //int repoId = (int) repo.getId(); // Obtendo o ID do repositório
 
             for (GHUser user : repo.getCollaborators()) {
                 colaborador.setUsuario_id((int) user.getId());
@@ -66,6 +67,27 @@ public class TarefaServiceImpl implements TarefaService{
             e.printStackTrace();
         }
         
+        return newTarefa;
+    }
+    @Override
+    public Tarefa save(GHIssue issue, GHRepository repo) throws IOException{
+        Tarefa newTarefa = new Tarefa();
+        newTarefa.setTitulo(issue.getTitle());
+        newTarefa.setDescricao(issue.getBody());
+        newTarefa.setId_criador((int)issue.getUser().getId());
+        newTarefa.setId_projeto((int) repo.getId());
+        newTarefa.setData_criacao(issue.getCreatedAt().toString());
+
+        tarefaRepository.save(newTarefa);
+
+        Colaborador novoColaborador = new Colaborador();
+        novoColaborador.setTarefa_id(newTarefa.getId());
+        
+        for (GHUser collaborator : issue.getAssignees()) {   
+            novoColaborador.setUsuario_id((int) collaborator.getId());
+            colaboradorService.save(novoColaborador);      
+        }
+    
         return newTarefa;
     }
 
@@ -86,4 +108,6 @@ public class TarefaServiceImpl implements TarefaService{
 
         return tarefas;
     }
+
+    
 }

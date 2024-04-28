@@ -2,6 +2,10 @@ package com.projectmanager.service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+
+import org.kohsuke.github.GHIssue;
+import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
@@ -14,12 +18,16 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
-
+import com.projectmanager.entities.Projeto;
+import com.projectmanager.entities.Tarefa;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.model.UsuarioModel;
 
 @Service
 public class GithubAPIService {
+
+    @Autowired
+    TarefaService tarefaService = new TarefaServiceImpl();
 
     @Autowired
     public GithubAPIService() {}
@@ -87,8 +95,16 @@ public class GithubAPIService {
         GHMyself user = getUser(accessToken);
         UsuarioModel newUser = new UsuarioModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
 
-    return newUser;
-}
+        return newUser;
+    }
+
+    public void saveIssuesAsTarefas(GHRepository repo) throws IOException {
+        List<GHIssue> issues = repo.getIssues(GHIssueState.ALL);
+        for (GHIssue issue : issues) {
+            System.out.println(issue.getTitle()); 
+            tarefaService.save(issue,repo);
+        }
+    }
 
     //Retorna o AccessToken do usuário a partir do token de autenticação do oauth
     public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,OAuth2AuthorizedClientService oauth2AuthorizedClientService){
@@ -108,6 +124,8 @@ public class GithubAPIService {
             System.out.println("Client not found for clientRegistrationId: " + clientRegistrationId);
             throw new RuntimeException("Client missing"); 
         }
+
+
     
     }
     
