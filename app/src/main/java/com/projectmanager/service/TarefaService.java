@@ -1,7 +1,9 @@
 package com.projectmanager.service;
 
+import java.io.IOException;
 import java.util.Collection;
 
+import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHRepository;
 
 import com.projectmanager.entities.Tarefa;
@@ -11,6 +13,7 @@ public interface TarefaService {
     public Iterable<Tarefa> findAll();
     public Tarefa find(int id);
     public Tarefa save(TarefaForm tarefa, int usuarioid, GHRepository repo);
+    public Tarefa save(GHIssue issue,GHRepository repo)throws IOException;
     public void delete(int id);
     public Collection<Tarefa> getTaskByProject(int projetoid);
 }

@@ -83,9 +83,8 @@ public class RepositoryController {
             return "error";
         }
         try {
-            processRepository(loggedUser, repoName); //TODO Transformar em função do repositoryService
-            UsuarioModel user = new UsuarioModel(loggedUser.getLogin(), loggedUser.getId(), "dummyToken",
-                    loggedUser.getEmail(), "dummyFirstName");
+            projetoService.save(loggedUser, repoName); 
+            UsuarioModel user = githubService.getUserModel(accessToken); 
             model.addAttribute("user", user);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
@@ -100,10 +99,4 @@ public class RepositoryController {
         return "project";
     }
 
-    private void processRepository(GHMyself loggedUser, String repoName) throws IOException {
-
-        GHRepository repo = githubService.getRepository(loggedUser, repoName);
-
-        projetoService.save(repo);
-    }
 }
