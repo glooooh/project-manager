@@ -12,16 +12,19 @@ import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.PermissionDeniedDataAccessException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
-import com.projectmanager.entities.Projeto;
-import com.projectmanager.entities.Tarefa;
+import com.projectmanager.entities.Usuario;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.model.UsuarioModel;
+
+
 
 @Service
 public class GithubAPIService {
@@ -30,7 +33,11 @@ public class GithubAPIService {
     TarefaService tarefaService = new TarefaServiceImpl();
 
     @Autowired
+    UsuarioService usuarioService = new UsuarioServiceImpl();
+
+    @Autowired
     public GithubAPIService() {}
+
     
     public GHMyself getUser(String accessToken) throws IOException {  
             GitHub github = new GitHubBuilder().withOAuthToken(accessToken).build();
@@ -101,6 +108,18 @@ public class GithubAPIService {
         }
     }
 
+    public Usuario getUsuario(String accessToken) throws IOException {
+        GHMyself loggedUser = getUser(accessToken);
+
+        long user_id = loggedUser.getId();
+        Usuario usuario = new Usuario();
+        usuario.setId((int) user_id);
+        usuario.setName(loggedUser.getName());
+        usuario.setUsername(loggedUser.getLogin());
+
+        return usuario;
+    }
+
     //Retorna o AccessToken do usuário a partir do token de autenticação do oauth
     public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,OAuth2AuthorizedClientService oauth2AuthorizedClientService){
         OAuth2AuthorizedClient client = oauth2AuthorizedClientService.loadAuthorizedClient(clientRegistrationId, authenticationToken.getName());
@@ -121,7 +140,7 @@ public class GithubAPIService {
         }
     }
     
-    public String getUserId(OAuth2AuthenticationToken authenticationToken, OAuth2AuthorizedClientService oauth2AuthorizedClientService) throws Exception {
+    public String getUserId(OAuth2AuthenticationToken authenticationToken, OAuth2AuthorizedClientService oauth2AuthorizedClientService) throws IOException {
         if (isAuthenticated(authenticationToken)) {
                 String accessToken = getAccessToken(authenticationToken, "github",
                         oauth2AuthorizedClientService);
@@ -131,7 +150,15 @@ public class GithubAPIService {
         return null; // Retornar null ou algum valor padrão se o usuário não estiver autenticado
     }
 
-    public boolean isAuthenticated(OAuth2AuthenticationToken authenticationToken) {
+    public boolean isAuthenticated(OAuth2AuthenticationToken authenticationToken){
         return authenticationToken != null && authenticationToken.isAuthenticated();
     }
+
+    public boolean validateUser(GHUser loggedUser, String user_id) throws PermissionDeniedDataAccessException {
+        if (!user_id.equals(Long.toString(loggedUser.getId()))) {
+            throw new PermissionDeniedDataAccessException("Tentativa de acesso de repositório pertencente a outro usuário", null);
+        }
+        return true;
+    }
+    
 }

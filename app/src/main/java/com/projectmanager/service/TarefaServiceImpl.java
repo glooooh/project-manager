@@ -64,7 +64,7 @@ public class TarefaServiceImpl implements TarefaService{
                 colaboradorService.save(colaborador);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            return newTarefa;
         }
         
         return newTarefa;

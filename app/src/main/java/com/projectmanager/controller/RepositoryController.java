@@ -53,15 +53,16 @@ public class RepositoryController {
     public String getUserRepositories(@PathVariable("user_id") String user_id,
             OAuth2AuthenticationToken authenticationToken, Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken);
-
-        //Verifica se o usuário logado está acessando a própria página
-        if (!user_id.equals(Long.toString(loggedUser.getId()))) {
-            model.addAttribute("errorMessage", "Usuário inválido.");
-            return "error";
-        }
+        
         // Obter todos os repositórios do usuário no GitHub
         try {
+            GHMyself loggedUser = githubService.getUser(accessToken);
+
+            //Verifica se o usuário logado está acessando a própria página
+            if (!user_id.equals(Long.toString(loggedUser.getId()))) {
+                model.addAttribute("errorMessage", "Usuário inválido.");
+                return "error";
+            }
             Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
             model.addAttribute("repositories", repositories);
         } catch (IOException e) {
@@ -78,13 +79,11 @@ public class RepositoryController {
             OAuth2AuthenticationToken authenticationToken, Model model) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
-
-        if (!user_id.equals(Long.toString(loggedUser.getId()))) { //TODO Transformar em funcao de validacao?
-            model.addAttribute("errorMessage", "Você está tentando acessar um repositório de outro usuário");
-            return "error";
-        }
+        
+        
         try {
+            GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
+            githubService.validateUser(loggedUser, user_id);
             projetoService.save(loggedUser, repoName); 
             UsuarioModel user = githubService.getUserModel(accessToken); 
             model.addAttribute("user", user);
@@ -104,13 +103,10 @@ public class RepositoryController {
             OAuth2AuthenticationToken authenticationToken, Model model) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
-
-        if (!user_id.equals(Long.toString(loggedUser.getId()))) { //TODO Transformar em funcao de validacao?
-            model.addAttribute("errorMessage", "Você está tentando acessar um repositório de outro usuário");
-            return "error";
-        }
+        
         try {
+            GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
+            githubService.validateUser(loggedUser, user_id);
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);
             Collection<Tarefa> tasks = tarefaService.getTaskByProject((int)repo.getId()); //TODO pegar tarefas só do usuário?
             model.addAttribute("schedule", tasks);

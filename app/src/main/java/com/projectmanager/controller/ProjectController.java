@@ -50,13 +50,14 @@ public class ProjectController {
             OAuth2AuthenticationToken authenticationToken,
             Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken);
+        
 
 
         //TODO jogar no service
         Collection<GHRepository> projects = new ArrayList<>();
         try {
-        Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
+            GHMyself loggedUser = githubService.getUser(accessToken);
+            Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
 
             for (Projeto projeto : projetoService.findAll()) {
                 for (GHRepository repo : repositories) {

@@ -51,11 +51,12 @@ public class TarefaController {
     public String getUserTarefas(Model model, @PathVariable("repo_name") String repoName,
     @PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken);
         
         model.addAttribute("user_id", user_id);
         
         try {
+            GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
+            githubService.validateUser(loggedUser, user_id);
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
             int repoId = (int) repo.getId();
             Collection<Tarefa> tasks = tarefaService.getTaskByProject(repoId); //TODO pegar tarefas só do usuário?
@@ -64,8 +65,8 @@ public class TarefaController {
             RepositoryModel repository = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
             model.addAttribute("repository", repository);
         } catch (IOException e) {
-            
             e.printStackTrace();
+            return "error";
         }
         return "tarefas";
     }
@@ -92,20 +93,19 @@ public class TarefaController {
 
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String userId) {
+    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String user_id) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken);
-        System.out.println(novaTarefa.toString());
-               
         try {
+            GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
+            githubService.validateUser(loggedUser, user_id);
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
-            tarefaService.save(novaTarefa, Integer.parseInt(userId), repo);
+            tarefaService.save(novaTarefa, Integer.parseInt(user_id), repo);
         } catch (IOException e) {
             e.printStackTrace();
         }
         
-        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks";
+        String redirect = "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks";
         return redirect;
     }
 

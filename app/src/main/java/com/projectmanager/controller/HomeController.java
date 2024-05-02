@@ -12,8 +12,6 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.projectmanager.entities.Usuario;
 
@@ -56,8 +54,15 @@ public class HomeController {
         }
 
         // TODO: alterar a rota
-
-        return "redirect:/user/" + githubService.getUserId(authenticationToken,oauth2AuthorizedClientService) + "/projects";
+        try {
+            String userId = githubService.getUserId(authenticationToken,oauth2AuthorizedClientService);
+            return "redirect:/user/" + userId + "/projects";
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "error";
+        }
+        
     }
 
     @GetMapping("/repositories")
@@ -65,8 +70,16 @@ public class HomeController {
         if (!githubService.isAuthenticated(authenticationToken)) {
             return "redirect:/";
         }
-
-        return "redirect:/user/" + githubService.getUserId(authenticationToken,oauth2AuthorizedClientService) + "/repositories";
+       
+        try {
+            String userId = githubService.getUserId(authenticationToken,oauth2AuthorizedClientService);
+            return "redirect:/user/" + userId + "/repositories";
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "error";
+        }
+        
     }
 
     @GetMapping("/sobre")
@@ -76,28 +89,32 @@ public class HomeController {
             // modelo
             String accessToken = githubService.getAccessToken(authenticationToken, "github",
                     oauth2AuthorizedClientService);
-            GHMyself loggedUser = githubService.getUser(accessToken);
-            model.addAttribute("user", loggedUser);
+            GHMyself loggedUser;
+            try {
+                loggedUser = githubService.getUser(accessToken);
+                model.addAttribute("user", loggedUser);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return "error";
+            }
+            
         }
 
         return "sobre";
     }
 
-    private String processAuthenticatedUser(Model model, OAuth2AuthenticationToken authenticationToken)
-            throws IOException {
+    private String processAuthenticatedUser(Model model, OAuth2AuthenticationToken authenticationToken){
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        GHMyself loggedUser = githubService.getUser(accessToken);
-
-        long user_id = loggedUser.getId();
-
-        if (!usuarioService.exist((int) user_id)) {
-            Usuario usuario = new Usuario();
-            usuario.setId((int) user_id);
-            usuario.setName(loggedUser.getName());
-            usuario.setUsername(loggedUser.getLogin());
+        try {
+            Usuario usuario = githubService.getUsuario(accessToken);
             usuarioService.save(usuario);
-        }
 
-        return "redirect:/user/" + user_id;
+        return "redirect:/user/" + Integer.toString(usuario.getId());
+        }
+        catch (IOException e) {
+            return "error";
+            // TODO: handle exception
+        }
     }
 }

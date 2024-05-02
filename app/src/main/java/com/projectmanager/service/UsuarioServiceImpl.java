@@ -24,7 +24,11 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public Usuario save(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+        if (!exist(usuario.getId())){
+            return usuarioRepository.save(usuario);
+        }
+        return null;
+        
     }
 
     @Override
@@ -36,5 +40,7 @@ public class UsuarioServiceImpl implements UsuarioService{
     public boolean exist(int id) {
         return usuarioRepository.existsById(id);
     }
+
+    
 
 }
