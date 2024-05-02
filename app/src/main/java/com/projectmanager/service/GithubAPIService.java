@@ -32,15 +32,10 @@ public class GithubAPIService {
     @Autowired
     public GithubAPIService() {}
     
-    public GHMyself getUser(String accessToken) {
-        try {
+    public GHMyself getUser(String accessToken) throws IOException {  
             GitHub github = new GitHubBuilder().withOAuthToken(accessToken).build();
             GHMyself user = github.getMyself();
-            return user;
-            } catch (IOException e) {
-            System.out.println(e);
-            return null;
-        }        
+            return user;        
     }
 
     public Collection<GHRepository> getRepositories(GHMyself user) throws IOException {
@@ -99,7 +94,7 @@ public class GithubAPIService {
     }
 
     public void saveIssuesAsTarefas(GHRepository repo) throws IOException {
-        List<GHIssue> issues = repo.getIssues(GHIssueState.ALL);
+        List<GHIssue> issues = repo.getIssues(GHIssueState.OPEN);
         for (GHIssue issue : issues) {
             System.out.println(issue.getTitle()); 
             tarefaService.save(issue,repo);
@@ -124,9 +119,19 @@ public class GithubAPIService {
             System.out.println("Client not found for clientRegistrationId: " + clientRegistrationId);
             throw new RuntimeException("Client missing"); 
         }
-
-
-    
     }
     
+    public String getUserId(OAuth2AuthenticationToken authenticationToken, OAuth2AuthorizedClientService oauth2AuthorizedClientService) throws Exception {
+        if (isAuthenticated(authenticationToken)) {
+                String accessToken = getAccessToken(authenticationToken, "github",
+                        oauth2AuthorizedClientService);
+                GHMyself loggedUser = getUser(accessToken);
+                return String.valueOf(loggedUser.getId());
+        }
+        return null; // Retornar null ou algum valor padrão se o usuário não estiver autenticado
+    }
+
+    public boolean isAuthenticated(OAuth2AuthenticationToken authenticationToken) {
+        return authenticationToken != null && authenticationToken.isAuthenticated();
+    }
 }

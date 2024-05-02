@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.ui.Model; // Importe a classe Model
 
-import com.projectmanager.entities.Colaborador;
 import com.projectmanager.entities.Projeto;
-import com.projectmanager.entities.Tarefa;
 import com.projectmanager.service.ColaboradorService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.ProjetoService;
@@ -40,7 +38,7 @@ public class ProjectController {
     @Autowired
     ColaboradorService colaboradorService;
 
-    @Autowired
+    @Autowired    
     public ProjectController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
         this.githubService = githubService;
@@ -54,12 +52,11 @@ public class ProjectController {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         GHMyself loggedUser = githubService.getUser(accessToken);
 
-        // Obter todos os repositórios do usuário no GitHub
-        Collection<GHRepository> repositories;
 
+        //TODO jogar no service
         Collection<GHRepository> projects = new ArrayList<>();
         try {
-            repositories = githubService.getRepositories(loggedUser);
+        Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
 
             for (Projeto projeto : projetoService.findAll()) {
                 for (GHRepository repo : repositories) {
@@ -77,6 +74,6 @@ public class ProjectController {
 
         model.addAttribute("repositories", projects);
 
-        return "repositories"; // Supondo que "projects" seja o nome da sua página de projetos
+        return "repositories"; 
     }
 }

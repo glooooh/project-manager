@@ -16,10 +16,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="tarefa : ${schedule.tarefas}">
+                <tr th:each="tarefa : ${schedule}">
                     <td th:text="${tarefa.titulo}"></td>
                     <td th:text="${tarefa.descricao}"></td>
-                    <td th:text="${tarefa.data}"></td>
+                    <td th:text="${tarefa.prazo}"></td>
                 </tr>
             </tbody>
         </table>

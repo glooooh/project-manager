@@ -3,6 +3,8 @@ package com.projectmanager.controller;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.kohsuke.github.GHIssue;
+import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +90,6 @@ public class RepositoryController {
             model.addAttribute("user", user);
 
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
-
             model.addAttribute("repository", repo);
 
         } catch (IOException e) {
@@ -97,6 +98,28 @@ public class RepositoryController {
         }
 
         return "project";
+    }
+    @GetMapping("/{repo_name}/cronograma")
+    public String getRepositoryCronograma(@PathVariable("user_id") String user_id, @PathVariable("repo_name") String repoName,
+            OAuth2AuthenticationToken authenticationToken, Model model) {
+
+        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+        GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
+
+        if (!user_id.equals(Long.toString(loggedUser.getId()))) { //TODO Transformar em funcao de validacao?
+            model.addAttribute("errorMessage", "Você está tentando acessar um repositório de outro usuário");
+            return "error";
+        }
+        try {
+            RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);
+            Collection<Tarefa> tasks = tarefaService.getTaskByProject((int)repo.getId()); //TODO pegar tarefas só do usuário?
+            model.addAttribute("schedule", tasks);
+
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error";
+        }
+        return "cronograma";
     }
 
 }

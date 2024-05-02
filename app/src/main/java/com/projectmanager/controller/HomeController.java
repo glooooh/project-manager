@@ -35,7 +35,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String getIndex(OAuth2AuthenticationToken authenticationToken) {
-        if (isAuthenticated(authenticationToken)) {
+        if (githubService.isAuthenticated(authenticationToken)) {
             return "redirect:/home";
         }
         return "index";
@@ -43,7 +43,7 @@ public class HomeController {
 
     @GetMapping("/home")
     public String getHome(Model model, OAuth2AuthenticationToken authenticationToken) throws IOException {
-        if (!isAuthenticated(authenticationToken)) {
+        if (!githubService.isAuthenticated(authenticationToken)) {
             return "redirect:/";
         }
         return processAuthenticatedUser(model, authenticationToken);
@@ -51,27 +51,27 @@ public class HomeController {
 
     @GetMapping("/projects")
     public String getProjects(Model model, OAuth2AuthenticationToken authenticationToken) {
-        if (!isAuthenticated(authenticationToken)) {
+        if (!githubService.isAuthenticated(authenticationToken)) {
             return "redirect:/";
         }
 
         // TODO: alterar a rota
 
-        return "redirect:/user/" + getUserId(authenticationToken) + "/projects";
+        return "redirect:/user/" + githubService.getUserId(authenticationToken,oauth2AuthorizedClientService) + "/projects";
     }
 
     @GetMapping("/repositories")
     public String getRepositories(Model model, OAuth2AuthenticationToken authenticationToken) {
-        if (!isAuthenticated(authenticationToken)) {
+        if (!githubService.isAuthenticated(authenticationToken)) {
             return "redirect:/";
         }
 
-        return "redirect:/user/" + getUserId(authenticationToken) + "/repositories";
+        return "redirect:/user/" + githubService.getUserId(authenticationToken,oauth2AuthorizedClientService) + "/repositories";
     }
 
     @GetMapping("/sobre")
     public String getSobre(Model model, OAuth2AuthenticationToken authenticationToken) {
-        if (isAuthenticated(authenticationToken)) {
+        if (githubService.isAuthenticated(authenticationToken)) {
             // Se o usuário estiver autenticado, obtenha suas informações e adicione ao
             // modelo
             String accessToken = githubService.getAccessToken(authenticationToken, "github",
@@ -81,24 +81,6 @@ public class HomeController {
         }
 
         return "sobre";
-    }
-
-    private boolean isAuthenticated(OAuth2AuthenticationToken authenticationToken) {
-        return authenticationToken != null && authenticationToken.isAuthenticated();
-    }
-
-    private String getUserId(OAuth2AuthenticationToken authenticationToken) {
-        if (isAuthenticated(authenticationToken)) {
-            try {
-                String accessToken = githubService.getAccessToken(authenticationToken, "github",
-                        oauth2AuthorizedClientService);
-                GHMyself loggedUser = githubService.getUser(accessToken);
-                return String.valueOf(loggedUser.getId());
-            } catch (Exception e) {
-                e.printStackTrace(); // Apenas para fins de depuração, substitua por um tratamento adequado
-            }
-        }
-        return null; // Retornar null ou algum valor padrão se o usuário não estiver autenticado
     }
 
     private String processAuthenticatedUser(Model model, OAuth2AuthenticationToken authenticationToken)
