@@ -51,6 +51,7 @@ public class TarefaServiceImpl implements TarefaService{
         newTarefa.setId_criador(usuarioid);
         newTarefa.setId_projeto((int) repo.getId());
         newTarefa.setData_criacao(formatador.format(data));
+        //newTarefa.setStatus(tarefaForm.getStatus());
 
         tarefaRepository.save(newTarefa);
         
@@ -60,8 +61,10 @@ public class TarefaServiceImpl implements TarefaService{
             //int repoId = (int) repo.getId(); // Obtendo o ID do repositório
 
             for (GHUser user : repo.getCollaborators()) {
-                colaborador.setUsuario_id((int) user.getId());
-                colaboradorService.save(colaborador);
+                if(tarefaForm.getCollaborators().contains(user.getLogin())){
+                    colaborador.setUsuario_id((int) user.getId());
+                    colaboradorService.save(colaborador);
+                };
             }
         } catch (IOException e) {
             return newTarefa;
@@ -69,6 +72,7 @@ public class TarefaServiceImpl implements TarefaService{
         
         return newTarefa;
     }
+    
     @Override
     public Tarefa save(GHIssue issue, GHRepository repo) throws IOException{
         Tarefa newTarefa = new Tarefa();
@@ -94,6 +98,7 @@ public class TarefaServiceImpl implements TarefaService{
     @Override
     public void delete(int id) {
         tarefaRepository.deleteById(id);
+        colaboradorService.deleteTarefa(id);
     }
 
     @Override
@@ -107,6 +112,19 @@ public class TarefaServiceImpl implements TarefaService{
 		}
 
         return tarefas;
+    }
+
+    @Override
+    public Tarefa edit(TarefaForm tarefaForm, int tarefaId) {
+        Tarefa newTarefa = find(tarefaId);
+
+        newTarefa.setTitulo(tarefaForm.getTitulo());
+        newTarefa.setDescricao(tarefaForm.getDescricao());
+        newTarefa.setPrazo(tarefaForm.getPrazo());
+        //newTarefa.setStatus(tarefaForm.getStatus());
+
+        delete(tarefaId);
+        return tarefaRepository.save(newTarefa);
     }
 
     

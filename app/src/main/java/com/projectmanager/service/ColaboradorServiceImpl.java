@@ -40,4 +40,13 @@ public class ColaboradorServiceImpl implements ColaboradorService{
 
     }
 
+    @Override
+    public void deleteTarefa(int idTarefa) {
+       for (Colaborador colaborador : findAll()) {   
+            if(colaborador.getTarefa_id() == idTarefa){
+                colaboradorRepository.delete(colaborador);
+            }
+        }
+    }
+
 }
