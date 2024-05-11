@@ -7,5 +7,5 @@ public interface ColaboradorService {
     public Iterable<Colaborador> findAll();
     public Colaborador save(Colaborador colaborador);
     public Iterable<Tarefa> findTasksByID(int id);
-    public void deleteTarefa(int id);
+    public void deleteColaboradoresTarefa(int id);
 }

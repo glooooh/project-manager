@@ -23,8 +23,11 @@ public class TarefaServiceImpl implements TarefaService{
 
     @Autowired
     TarefaRepository tarefaRepository;
+
     @Autowired
     ColaboradorService colaboradorService;
+    @Autowired
+    ComentarioService comentarioService;
 
     @Override
     public Iterable<Tarefa> findAll() {
@@ -97,8 +100,10 @@ public class TarefaServiceImpl implements TarefaService{
 
     @Override
     public void delete(int id) {
+        colaboradorService.deleteColaboradoresTarefa(id);
+        comentarioService.deleteComentariosTarefa(id);
+
         tarefaRepository.deleteById(id);
-        colaboradorService.deleteTarefa(id);
     }
 
     @Override

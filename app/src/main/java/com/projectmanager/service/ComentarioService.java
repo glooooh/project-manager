@@ -10,5 +10,6 @@ public interface ComentarioService {
     public Comentario find(int id);
     public Comentario save(int tarefaId, String userId, String message);
     public void delete(int id);
+    public void deleteComentariosTarefa(int idTarefa);
     public Collection<ComentarioModel> getComentarioTarefa(int tarefaId);
 }

@@ -66,6 +66,15 @@ public class ComentarioServiceImpl implements ComentarioService{
         return comentarios;
     }
 
+    @Override
+    public void deleteComentariosTarefa(int idTarefa) {
+        for (Comentario comentario : findAll()) {
+            if(comentario.getTarefa() == idTarefa){
+                delete(comentario.getId());
+            }
+        }
+    }
+
     
 
 }
