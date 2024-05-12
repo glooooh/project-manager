@@ -7,14 +7,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import githubService.SpringBootApplication;
 //import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
+import com.projectmanager.entities.Feedback;
 import com.projectmanager.entities.Tarefa;
+import com.projectmanager.service.FeedbackService;
 import com.projectmanager.service.TarefaService;
 
 @SpringBootApplication()
 public class AppApplication implements CommandLineRunner{
 
 	@Autowired
-	TarefaService tarefaService;
+	FeedbackService feedbackService;
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
 	}
@@ -27,21 +29,13 @@ public class AppApplication implements CommandLineRunner{
 
 	/*
 	private void Demo1(){
-		for(Tarefa tarefa : tarefaService.getTaskByProject(0)){
-			System.out.println("id: "+ tarefa.getId());
-			System.out.println("id do criador: "+tarefa.getId_criador());
-			System.out.println("id projeto: "+tarefa.getId_projeto());
+		for(Feedback feedback : feedbackService.findAll()){
+			System.out.println("id: "+ feedback.getId());
+			System.out.println("Criador: "+feedback.getEscritor());
+			System.out.println("Mensagem: "+feedback.getComentario());
+			System.out.println("Id destinatario: "+feedback.getDestinatario());
 		}
 	}
-
-	// private void Demo2(){
-	// 	Collection<Comentario> comentarios = comentarioService.getComentarioTarefa(1);
-	// 	for(Comentario comentario : comentarios){
-	// 		System.out.println("id: "+ comentario.getId());
-	// 		System.out.println("usuario: "+ comentario.getEscritor());
-	// 		System.out.println("comentario: "+comentario.getComentario());
-	// 	}
-	// }
 	
 	private void Demo2(){
 		Comentario comentario = comentarioService.find(600);
