@@ -93,7 +93,7 @@ public class TarefaController {
 
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-    @PathVariable("repo_name") String repoName,@PathVariable("user_id") String user_id) {
+                            @PathVariable("repo_name") String repoName,@PathVariable("user_id") String user_id) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         try {
