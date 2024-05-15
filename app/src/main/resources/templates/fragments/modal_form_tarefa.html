@@ -44,8 +44,8 @@
                     <button type="submit" class="btn btn-primary">Criar Tarefa</button>
                 </div>
 
-                <div class="alert alert-danger" role="alert">
-                    <ul th:if="${errors}">
+                <div class="alert alert-danger" role="alert" th:if="${errors}">
+                    <ul>
                         <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
                     </ul>
                 </div>

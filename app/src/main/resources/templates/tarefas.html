@@ -29,20 +29,26 @@
 
         <main class="px-3 d-flex flex-column justify-content-center align-items-center mb-auto mt-auto">
             <div class="details_task">
-                <h2>Tarefas em <span th:text="${repository.name}"></span> </h2>
-                <ul>
-                    <li th:each="tarefa : ${tarefas}">
-                        <p>ID: <span th:text="${tarefa.id}"></span></p>
-                        <p>Título: <span th:text="${tarefa.titulo}"></span></p>
-                        <p>ID Criador: <span th:text="${tarefa.id_criador}"></span></p>
-                        <p>Descrição: <span th:text="${tarefa.descricao}"></span></p>
-                        <p>Prazo: <span th:text="${tarefa.prazo}"></span></p>
-                        <p>Data de Criação: <span th:text="${tarefa.data_criacao}"></span></p>
-                        <p>Status: <span th:text="${tarefa.status}"></span></p>
-                        <p>Id Projeto: <span th:text="${tarefa.id_projeto}"></span></p>
-                    </li>
-                </ul>
+                <h2>Tarefas em <span th:text="${repository.name}"></span></h2>
+                <div class="row">
+                    <div class="col">
+                        <div class="card mb-3" th:each="tarefa : ${tarefas}">
+                            <div class="card-body">
+                                <span th:if="${tarefa.status}" class="position-absolute top-0 start-0 badge bg-success" style="font-size: 1rem;">✓</span>
+                                <h5 class="card-title" th:text="${tarefa.titulo}"></h5>
+                                <p class="card-text" th:text="${tarefa.descricao}"></p>
+                                <div class="tags">
+                                    <!-- <small>Integrantes:</small>
+                                    <ul>
+                                        <li th:each="integrante : ${tarefa.integrantes}" th:text="${integrante}"></li>
+                                    </ul> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
 
             <div class="buttons">
                 <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
