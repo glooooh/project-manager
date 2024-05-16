@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -89,9 +90,12 @@ public class ProjetoServiceImpl implements ProjetoService {
         List<Projeto> orderedProjects = (List<Projeto>) findAll();
 
         for (Projeto projeto : orderedProjects) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-            LocalDateTime dataInicio = LocalDateTime.parse(projeto.getData_inicio(), formatter);
-            projeto.setDataInicioDate(dataInicio);
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);                LocalDateTime dataInicio = LocalDateTime.parse(projeto.getData_inicio(), formatter);
+                projeto.setDataInicioDate(dataInicio);
+            } catch (DateTimeParseException e) {
+                System.out.println("Erro ao analisar a data de início do projeto: " + e.getMessage());
+            }
         }
 
         Collections.sort(orderedProjects,
