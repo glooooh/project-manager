@@ -26,7 +26,7 @@ public class Tarefa {
     private String descricao;
     private String prazo;
     private String data_criacao;
-    private boolean status;
+    private boolean completa;
     private int id_projeto;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -91,12 +91,12 @@ public class Tarefa {
         this.data_criacao = data_criacao;
     }
 
-    public Boolean getStatus() {
-        return this.status;
+    public Boolean getCompleta() {
+        return this.completa;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
+    public void setCompleta(Boolean completa) {
+        this.completa = completa;
     }
 
     public int getId_projeto() {
