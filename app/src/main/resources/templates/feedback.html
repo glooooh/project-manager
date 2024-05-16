@@ -15,33 +15,32 @@
                 <div class="chat-container">
                     <h2>Chat</h2>
                     <fieldset class="comments">
-                    <!-- Uncomment the following lines when you have data to display -->
-                    <!--
+                    
                     <div th:each="feedback : ${feedbacks}">
                         <fieldset class="feedback">
                         <p th:text="${feedback.escritor}"></p>
                         <p th:text="${feedback.comentario}"></p>
                         </fieldset>
                     </div>
-                    -->
+                    
                     </fieldset>
                     
                 </div>
             </div>
 
-            <!-- Column for writing feedback -->
+            
             <div class="col">
                 <form method="POST">
                     <div class="chat-input">
-                        <input type="text" id="message" name="message" placeholder="Type your message">
+                        <input type="text" id="send_feedback" name="mensagem" placeholder="Type your message">
                         <input type="submit" value="Enviar">
                     </div>
                     <div class="col-12">
                         <fieldset class="border p-2">
                             <legend class="">Escolha a quem enviar o feedback:</legend>
                             <select name="collaborators" class="form-control">
-                                <!-- Uncomment the following line when you have data to display -->
-                                <!--<option th:each="collab : ${repository.collaborators}" th:value="${collab}" th:text="${collab}"></option>-->
+                                
+                                <option th:each="collab : ${collaborators}" th:value="${collab}" th:text="${collab}"></option>
                             </select>
                         </fieldset>
                     </div>
