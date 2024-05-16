@@ -7,7 +7,7 @@ import com.projectmanager.entities.Usuario;
 public interface ColaboradorService {
     public Iterable<Colaborador> findAll();
     public Colaborador save(Colaborador colaborador);
-    public Iterable<Tarefa> findTasksByIDUser(int id);
+    public Iterable<Tarefa> findTasksByIDUser(int id, TarefaService tarefaService);
     public Iterable<Usuario> findCollaboratorsByIDTask(int id);
     public void deleteColaboradoresTarefa(int id);
 }

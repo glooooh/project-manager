@@ -1,8 +1,12 @@
 package com.projectmanager.entities;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "projeto")
@@ -14,6 +18,9 @@ public class Projeto {
     private String descricao;
     private String data_inicio;
     private String data_fim;
+
+    @Transient
+    private LocalDateTime dataInicioDate;
 
 
     public int getId() {
@@ -54,6 +61,14 @@ public class Projeto {
 
     public void setData_fim(String data_fim) {
         this.data_fim = data_fim;
+    }
+
+    public LocalDateTime getDataInicioDate() {
+        return dataInicioDate;
+    }
+
+    public void setDataInicioDate(LocalDateTime dataInicioDate) {
+        this.dataInicioDate = dataInicioDate;
     }
     
 }

@@ -15,7 +15,8 @@ public class ColaboradorServiceImpl implements ColaboradorService {
 
     @Autowired
     ColaboradorRepository colaboradorRepository;
-    TarefaService tarefaService;
+
+    @Autowired
     UsuarioService usuarioService;
 
     @Override
@@ -29,7 +30,7 @@ public class ColaboradorServiceImpl implements ColaboradorService {
     }
 
     @Override
-    public Iterable<Tarefa> findTasksByIDUser(int id) {
+    public Iterable<Tarefa> findTasksByIDUser(int id, TarefaService tarefaService) {
         ArrayList<Tarefa> tarefas = new ArrayList<>();
 
         for (Colaborador colaborador : findAll()) {
