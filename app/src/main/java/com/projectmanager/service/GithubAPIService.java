@@ -99,8 +99,6 @@ public class GithubAPIService {
         return null;
     }
 
-    
-
     public void saveIssuesAsTarefas(GHRepository repo) throws IOException {
         List<GHIssue> issues = repo.getIssues(GHIssueState.OPEN);
         for (GHIssue issue : issues) {

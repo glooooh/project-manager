@@ -10,19 +10,16 @@
 <body>
     <div class="container">
         <div class="row">
-            <!-- Column for displaying feedback -->
             <div class="col">
                 <div class="chat-container">
                     <h2>Chat</h2>
-                    <fieldset class="comments">
-                    
-                    <div th:each="feedback : ${feedbacks}">
-                        <fieldset class="feedback">
-                        <p th:text="${feedback.escritor}"></p>
-                        <p th:text="${feedback.comentario}"></p>
-                        </fieldset>
-                    </div>
-                    
+                    <fieldset class="border p-3">  
+                        <div th:each="feedback : ${feedbacks}">
+                            <fieldset class="border p-3">
+                                <p th:text="${feedback.escritor}"></p>
+                                <p th:text="${feedback.comentario}"></p>
+                            </fieldset>
+                        </div>                    
                     </fieldset>
                     
                 </div>

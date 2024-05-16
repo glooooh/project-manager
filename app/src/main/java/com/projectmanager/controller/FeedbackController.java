@@ -56,16 +56,16 @@ public class FeedbackController {
      @PathVariable("repo_name") String repoName,@ModelAttribute FeedbackForm novoFeedback,
      @PathVariable("user_id") String userId) {
         try {
-            
+            String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
             System.out.println(novoFeedback.getMensagem());
             System.out.println(novoFeedback.getCollaborators());
-            int id = Integer.parseInt(userId);
-            feedbackService.save(repoName, id , novoFeedback);
+            feedbackService.save(repoName, accessToken , novoFeedback);
         }
-        catch (NumberFormatException e) {
-            System.out.println(userId + " cannot be converted to int");
+        catch (IOException e){
             e.printStackTrace();
+            return "error";
         }
-        return "feedback";
+        String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/feedback";
+        return redirect;
     }
 }

@@ -32,12 +32,15 @@ public class FeedbackServiceImpl implements FeedbackService{
     }
 
     @Override
-    public Feedback save(String repoName, int criadorId, FeedbackForm feedbackForm) {
+    public Feedback save(String repoName, String accessToken, FeedbackForm feedbackForm) throws IOException{
+        GHMyself user = githubService.getUser(accessToken);
+        GHRepository repo = githubService.getRepository(user, repoName);
+        Long colaboratorId = githubService.getCollaboratorId(feedbackForm.getCollaborators().get(0),repo);
         Feedback feedback = new Feedback();
         feedback.setComentario(feedbackForm.getMensagem());
-        feedback.setDestinatario(destinatarioId);
-        feedback.setEscritor(criadorName);
-        feedback.setProjeto(projetoId);
+        feedback.setDestinatario(colaboratorId.intValue());
+        feedback.setEscritor(user.getLogin());
+        feedback.setProjeto(Math.toIntExact(repo.getId()));
 
         return feedbackRepository.save(feedback);
     }
@@ -56,6 +59,7 @@ public class FeedbackServiceImpl implements FeedbackService{
 
         for (Feedback feedback : findAll()) {
             if (feedback.getDestinatario() == userId && feedback.getProjeto() == (int) repo.getId()){
+                System.out.println("Achei um feedback");
                 feedbacks.add(feedback);
             }
         }
