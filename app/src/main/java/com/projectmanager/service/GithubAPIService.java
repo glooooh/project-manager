@@ -44,7 +44,14 @@ public class GithubAPIService {
             GHMyself user = github.getMyself();
             return user;        
     }
+    public UsuarioModel getUserModel(String accessToken) throws IOException {
 
+        GHMyself user = getUser(accessToken);
+        UsuarioModel newUser = new UsuarioModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
+
+        return newUser;
+    }
+    
     public Collection<GHRepository> getRepositories(GHMyself user) throws IOException {
         Collection<GHRepository> repositories = user.getRepositories().values();
         return repositories;
@@ -90,14 +97,6 @@ public class GithubAPIService {
             }
         }
         return null;
-    }
-
-    public UsuarioModel getUserModel(String accessToken) throws IOException {
-
-        GHMyself user = getUser(accessToken);
-        UsuarioModel newUser = new UsuarioModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
-
-        return newUser;
     }
 
     public void saveIssuesAsTarefas(GHRepository repo) throws IOException {
