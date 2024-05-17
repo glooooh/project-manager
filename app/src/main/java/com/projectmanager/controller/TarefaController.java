@@ -143,13 +143,18 @@ public class TarefaController {
     }
 
     @PostMapping("/{tarefa_id}/edit")
-    public String postMethodName(@ModelAttribute TarefaForm novaTarefa,@PathVariable("tarefa_id") String tarefaId) {
+    public String postMethodName(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
+    @PathVariable("repo_name") String repoName, @PathVariable("tarefa_id") String tarefaId, @PathVariable("user_id") String user_id) throws IOException {
         
+        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         try {
             int id = Integer.parseInt(tarefaId);
 
-            /* TEM QUE PASSAR O GHREPOSITORY PARA FUNCIONAR */
-            //tarefaService.edit(novaTarefa, id);
+            GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
+            githubService.validateUser(loggedUser, user_id);
+            GHRepository repo = githubService.getRepository(loggedUser, repoName);
+
+            tarefaService.edit(novaTarefa, id, repo);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }

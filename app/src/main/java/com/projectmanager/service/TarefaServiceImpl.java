@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.kohsuke.github.GHIssue;
+import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHPersonSet;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
@@ -120,6 +121,7 @@ public class TarefaServiceImpl implements TarefaService{
 
     @Override
     public Tarefa edit(TarefaForm tarefaForm, int tarefaId, GHRepository repo) {
+
         Tarefa tarefa = find(tarefaId);
 
         colaboradorService.deleteColaboradoresTarefa(tarefaId);
