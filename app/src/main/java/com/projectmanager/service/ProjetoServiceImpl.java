@@ -114,4 +114,19 @@ public class ProjetoServiceImpl implements ProjetoService {
         return top3Projects;
     }
 
+    public Collection<GHRepository> getMatchingProjects(String accessToken) throws IOException {
+        GHMyself loggedUser = githubService.getUser(accessToken);    
+        Collection<GHRepository> projects = new ArrayList<>();
+        Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
+        for (Projeto projeto : findAll()) {
+            for (GHRepository repo : repositories) {
+                if (repo.getName().equals(projeto.getNome())) {
+                    projects.add(repo);
+                    break;
+                }
+            }
+        }
+        return projects;
+    }
+
 }

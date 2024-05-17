@@ -16,4 +16,5 @@ public interface ProjetoService {
     public boolean exist(int id);
     public Iterable<GHRepository> findProjectByUserRepositories(Iterable<Projeto> projects, Collection<GHRepository> repositories);
     public Iterable<GHRepository> findTop3ByOrderByDataCriacaoDesc(Collection<GHRepository> repositories);
-}
+    public Collection<GHRepository> getMatchingProjects(String accessToken) throws IOException ;
+    }

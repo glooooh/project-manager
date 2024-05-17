@@ -23,10 +23,11 @@ import com.projectmanager.entities.Tarefa;
 import com.projectmanager.forms.TarefaForm;
 import com.projectmanager.model.ComentarioModel;
 import com.projectmanager.model.RepositoryModel;
-import com.projectmanager.model.TarefaModel;
 import com.projectmanager.service.ComentarioService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.TarefaService;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/user/{user_id}/repositories/{repo_name}/tasks")
@@ -133,4 +134,25 @@ public class TarefaController {
                 + "/comentarios";
         return redirect;
     }
+
+    @GetMapping("/{tarefa_id}/edit")
+    public String editTarefa(Model model, @PathVariable("tarefa_id") String tarefaId) {
+        Tarefa tarefa = tarefaService.find(Integer.parseInt(tarefaId));
+        model.addAttribute("tarefa", tarefa);
+        return "edittarefa";
+    }
+
+    @PostMapping("/{tarefa_id}/edit")
+    public String postMethodName(@ModelAttribute TarefaForm novaTarefa,@PathVariable("tarefa_id") String tarefaId) {
+        
+        try {
+            int id = Integer.parseInt(tarefaId);
+            tarefaService.edit(novaTarefa, id);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        
+        return "redirect:/user/{user_id}/repositories/{repo_name}/tasks";
+    }
+    
 }

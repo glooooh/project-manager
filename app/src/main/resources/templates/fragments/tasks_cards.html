@@ -4,7 +4,7 @@
             <div class="card mb-3 d-flex justify-content-center align-items-center"
                 th:each="tarefa : ${tarefas}">
                 <div class="card-body">
-                    <span th:if="${tarefa.status}" class="position-absolute top-0 start-0 badge bg-success"
+                    <span th:if="${tarefa.completa}" class="position-absolute top-0 start-0 badge bg-success"
                         style="font-size: 1rem;">✓</span>
                     <h5 class="card-title" th:text="${tarefa.titulo}"></h5>
                     <p class="card-text" th:text="${tarefa.descricao}" style="max-height: 2em; overflow: hidden;"></p>
