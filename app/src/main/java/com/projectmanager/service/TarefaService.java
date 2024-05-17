@@ -14,7 +14,8 @@ public interface TarefaService {
     public Tarefa find(int id);
     public Tarefa save(TarefaForm tarefa, int usuarioid, GHRepository repo);
     public Tarefa save(GHIssue issue,GHRepository repo)throws IOException;
-    public Tarefa edit(TarefaForm tarefa, int tarefaId);
+    public Tarefa edit(TarefaForm tarefa, int tarefaId, GHRepository repo);
     public void delete(int id);
+    public TarefaForm getFormTarefa(int id);
     public Collection<Tarefa> getTaskByProject(int projetoid);
 }

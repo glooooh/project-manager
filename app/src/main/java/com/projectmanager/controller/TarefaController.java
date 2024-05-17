@@ -147,7 +147,9 @@ public class TarefaController {
         
         try {
             int id = Integer.parseInt(tarefaId);
-            tarefaService.edit(novaTarefa, id);
+
+            /* TEM QUE PASSAR O GHREPOSITORY PARA FUNCIONAR */
+            //tarefaService.edit(novaTarefa, id);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
