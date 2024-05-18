@@ -14,7 +14,7 @@ import com.projectmanager.forms.TarefaForm;
 public interface TarefaService {
     public Iterable<Tarefa> findAll();
     public Tarefa find(int id);
-    public Tarefa save(TarefaForm tarefa, int usuarioid, GHRepository repo)throws IOException,BusinessException,DateTimeParseException;
+    public Tarefa save(TarefaForm tarefaForm, String repoName, String accessToken, String user_id) throws IOException,BusinessException,DateTimeParseException;
     public Tarefa save(GHIssue issue,GHRepository repo)throws IOException;
     public Tarefa edit(TarefaForm tarefa, int tarefaId, GHRepository repo);
     public void delete(int id);

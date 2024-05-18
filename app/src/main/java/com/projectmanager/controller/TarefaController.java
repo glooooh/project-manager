@@ -8,6 +8,7 @@ import java.util.Collection;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -53,22 +54,13 @@ public class TarefaController {
     @GetMapping("")
     public String getUserTarefas(Model model, @PathVariable("repo_name") String repoName,
     @PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken,
-    @RequestParam(value="error",required = false) String errorMessage,
-    @RequestParam(value="isCreating",required = false) String isCreating) {
+    @RequestParam(value="error",required = false) String errorMessage) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         
         model.addAttribute("user_id", user_id);
         
         model.addAttribute("error", errorMessage);
-        
-        if(isCreating!=null){
-            if (isCreating.equals("true")){
-                model.addAttribute("isCreating", true);
-            }else{
-                model.addAttribute("isCreating", false);
-            }  
-        }       
-        
+ 
         try {
             GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
             githubService.validateUser(loggedUser, user_id);
@@ -97,10 +89,8 @@ public class TarefaController {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         try {
-            GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
-            githubService.validateUser(loggedUser, user_id);
-            GHRepository repo = githubService.getRepository(loggedUser, repoName);
-            tarefaService.save(novaTarefa, Integer.parseInt(user_id), repo);
+            
+            tarefaService.save(novaTarefa, repoName, accessToken, user_id);
         } catch (IOException e) {
             e.printStackTrace();
             model.addAttribute("error",e.getMessage());
@@ -114,8 +104,11 @@ public class TarefaController {
             model.addAttribute("error",e.getMessage());
             return "error";
         } catch (BusinessException e) {
-            String redirect = "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks?isCreating=true&error=" + e.getMessage();
+            String redirect = "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks?error=" + e.getMessage();
             return redirect;
+        } catch (PermissionDeniedDataAccessException e){
+            model.addAttribute("error",e.getMessage());
+            return "error";
         }
         
         String redirect = "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks";

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHMyself;
@@ -12,6 +13,7 @@ import org.kohsuke.github.GHPersonSet;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.projectmanager.entities.Colaborador;
@@ -36,6 +38,8 @@ public class TarefaServiceImpl implements TarefaService{
     ComentarioService comentarioService;
     @Autowired
     CronogramaService cronogramaService;
+    @Autowired
+    GithubAPIService githubService;
 
     @Override
     public Iterable<Tarefa> findAll() {
@@ -43,43 +47,40 @@ public class TarefaServiceImpl implements TarefaService{
     }
 
     @Override
-    public Tarefa find(int id) {
+    public Tarefa find(int id) throws NoSuchElementException{
         return tarefaRepository.findById(id).get();
     }
 
     @Override
-    public Tarefa save(TarefaForm tarefaForm, int usuarioid, GHRepository repo) throws IOException,BusinessException,DateTimeParseException {
+    public Tarefa save(TarefaForm tarefaForm, String repoName, String accessToken, String user_id) 
+    throws IOException,BusinessException,DateTimeParseException,PermissionDeniedDataAccessException {
         
         Colaborador colaborador = new Colaborador();
         Tarefa newTarefa = new Tarefa();
         newTarefa.setTitulo(tarefaForm.getTitulo());
         newTarefa.setDescricao(tarefaForm.getDescricao());
         newTarefa.setPrazo(tarefaForm.getPrazo());
-        newTarefa.setId_criador(usuarioid);
-        newTarefa.setId_projeto((int) repo.getId());     
-        colaborador.setTarefa_id(newTarefa.getId());
-        
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate inputDate = LocalDate.parse(tarefaForm.getPrazo(), formatter);
-            LocalDate currentDate = LocalDate.now();
-            if (inputDate.isBefore(currentDate)) {
-                throw new BusinessException("Não é possível selecionar um prazo anterior ao dia atual.");
-            }
-
-            for (GHUser user : repo.getCollaborators()) {
-                if(tarefaForm.getCollaborators().contains(user.getLogin())){
-                    colaborador.setUsuario_id((int) user.getId());
-                    colaboradorService.save(colaborador);
-                };
-            }
-        } catch (IOException e) {
-            throw new IOException(e);
-        } catch (DateTimeParseException e) {
-            throw new DateTimeParseException(e.getMessage(), tarefaForm.getPrazo(), 0);
+             
+        GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
+        githubService.validateUser(loggedUser, user_id);
+        GHRepository repo = githubService.getRepository(loggedUser, repoName);
+        newTarefa.setId_criador((int) loggedUser.getId());
+        newTarefa.setId_projeto((int) repo.getId());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate inputDate = LocalDate.parse(tarefaForm.getPrazo(), formatter);
+        LocalDate currentDate = LocalDate.now();
+        if (inputDate.isBefore(currentDate)) {
+            throw new BusinessException("Não é possível selecionar um prazo anterior ao dia atual.");
         }
-        
-        tarefaRepository.save(newTarefa);
+        newTarefa = tarefaRepository.save(newTarefa);
+        colaborador.setTarefa_id(newTarefa.getId());
+        for (GHUser user : repo.getCollaborators()) {
+            if(tarefaForm.getCollaborators().contains(user.getLogin())){
+                colaborador.setUsuario_id((int) user.getId());
+                colaboradorService.save(colaborador);
+            };
+        }
+                
         return newTarefa;
     }
     

@@ -48,8 +48,9 @@ public class UserController {
     public String getUserPage(@PathVariable("user_id") String userId, OAuth2AuthenticationToken authenticationToken,
             Model model) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        int userIdInt = Integer.parseInt(userId);
+        
         try {
+            int userIdInt = Integer.parseInt(userId);
             Iterable<Tarefa> tasks = colaboradorService.findTasksByIDUser(userIdInt, tarefaService);
             model.addAttribute("tarefas", tasks);
 
@@ -59,8 +60,11 @@ public class UserController {
             Collection<GHRepository> projects = (Collection<GHRepository>) projetoService.findTop3ByOrderByDataCriacaoDesc(repositories);
 
             model.addAttribute("repositories", projects);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Ocorreu um erro ao recuperar as tarefas do usuário. " + e.getMessage());
+        } catch (NumberFormatException e) {
+            model.addAttribute("errorMessage", "Erro ao transformar o Id do usuario. " + e.getMessage());
+            return "error";
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Erro ao buscar os repositorios do usuario. " + e.getMessage());
             return "error";
         }
 
