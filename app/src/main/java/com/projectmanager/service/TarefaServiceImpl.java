@@ -17,8 +17,12 @@ import org.springframework.stereotype.Service;
 import com.projectmanager.entities.Colaborador;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.entities.Usuario;
+import com.projectmanager.exceptions.BusinessException;
 import com.projectmanager.forms.TarefaForm;
 import com.projectmanager.repositories.TarefaRepository;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Service("TarefaService")
 public class TarefaServiceImpl implements TarefaService{
@@ -44,23 +48,24 @@ public class TarefaServiceImpl implements TarefaService{
     }
 
     @Override
-    public Tarefa save(TarefaForm tarefaForm, int usuarioid, GHRepository repo) {
+    public Tarefa save(TarefaForm tarefaForm, int usuarioid, GHRepository repo) throws IOException,BusinessException,DateTimeParseException {
         
         Colaborador colaborador = new Colaborador();
-
         Tarefa newTarefa = new Tarefa();
         newTarefa.setTitulo(tarefaForm.getTitulo());
         newTarefa.setDescricao(tarefaForm.getDescricao());
         newTarefa.setPrazo(tarefaForm.getPrazo());
         newTarefa.setId_criador(usuarioid);
-        newTarefa.setId_projeto((int) repo.getId());
-
-        tarefaRepository.save(newTarefa);
-        
+        newTarefa.setId_projeto((int) repo.getId());     
         colaborador.setTarefa_id(newTarefa.getId());
         
         try {
-            //int repoId = (int) repo.getId(); // Obtendo o ID do repositório
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate inputDate = LocalDate.parse(tarefaForm.getPrazo(), formatter);
+            LocalDate currentDate = LocalDate.now();
+            if (inputDate.isBefore(currentDate)) {
+                throw new BusinessException("Não é possível selecionar um prazo anterior ao dia atual.");
+            }
 
             for (GHUser user : repo.getCollaborators()) {
                 if(tarefaForm.getCollaborators().contains(user.getLogin())){
@@ -69,9 +74,12 @@ public class TarefaServiceImpl implements TarefaService{
                 };
             }
         } catch (IOException e) {
-            return newTarefa;
+            throw new IOException(e);
+        } catch (DateTimeParseException e) {
+            throw new DateTimeParseException(e.getMessage(), tarefaForm.getPrazo(), 0);
         }
         
+        tarefaRepository.save(newTarefa);
         return newTarefa;
     }
     

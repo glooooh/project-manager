@@ -91,7 +91,8 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         for (Projeto projeto : orderedProjects) {
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);                LocalDateTime dataInicio = LocalDateTime.parse(projeto.getData_inicio(), formatter);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);                
+                LocalDateTime dataInicio = LocalDateTime.parse(projeto.getData_inicio(), formatter);
                 projeto.setDataInicioDate(dataInicio);
             } catch (DateTimeParseException e) {
                 System.out.println("Erro ao analisar a data de início do projeto: " + e.getMessage());
