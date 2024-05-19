@@ -25,6 +25,10 @@ public class ProjetoServiceImpl implements ProjetoService {
     GithubAPIService githubService;
     @Autowired
     ProjetoRepository projetoRepository;
+    @Autowired
+    TarefaService tarefaService;
+    @Autowired
+    CronogramaService cronogramaService;
 
     @Override
     public Iterable<Projeto> findAll() {
@@ -50,7 +54,7 @@ public class ProjetoServiceImpl implements ProjetoService {
             projeto.setDescricao(repo.getDescription());
             projeto.setData_inicio(repo.getCreatedAt().toString());
 
-            githubService.saveIssuesAsTarefas(repo);
+            githubService.saveIssuesAsTarefas(repo,tarefaService);
 
             return projetoRepository.save(projeto);
 
@@ -61,6 +65,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     @Override
     public void delete(int id) {
+        cronogramaService.deleteCronogramasProjeto(id);
         projetoRepository.deleteById(id);
     }
 

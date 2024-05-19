@@ -88,8 +88,7 @@ public class TarefaController {
                             Model model) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        try {
-            
+        try {       
             tarefaService.save(novaTarefa, repoName, accessToken, user_id);
         } catch (IOException e) {
             e.printStackTrace();

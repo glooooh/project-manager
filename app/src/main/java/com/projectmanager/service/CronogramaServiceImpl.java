@@ -26,14 +26,8 @@ public class CronogramaServiceImpl implements CronogramaService{
     }
 
     @Override
-    public Cronograma save(int tarefaId, String titulo, String message, String data) {
-        Cronograma cronograma = new Cronograma();
-        cronograma.setId(tarefaId);
-        cronograma.setTitulo(titulo);
-        cronograma.setData(message);
-        cronograma.setData(data);
-
-        return cronogramaRepository.save(cronograma);
+    public Cronograma save(Cronograma newCronograma) {
+        return cronogramaRepository.save(newCronograma);
     }
 
     @Override
@@ -42,20 +36,20 @@ public class CronogramaServiceImpl implements CronogramaService{
     }
 
     @Override
-    public void deleteCronogramasTarefa(int idTarefa) {
+    public void deleteCronogramasProjeto(int idProjeto) {
         for (Cronograma cronograma : findAll()) {
-            if(cronograma.getTarefa_id() == idTarefa){
+            if(cronograma.getProjeto_id() == idProjeto){
                 delete(cronograma.getId());
             }
         }
     }
 
     @Override
-    public Collection<Cronograma> getCronogramasTarefa(int idTarefa) {
+    public Collection<Cronograma> getCronogramasProjeto(int idProjeto) {
         ArrayList<Cronograma> cronogramas = new ArrayList<>();
         
         for(Cronograma cronograma : findAll()){
-			if(cronograma.getTarefa_id() == idTarefa){
+			if(cronograma.getProjeto_id() == idProjeto){
                 cronogramas.add(cronograma);
             }
 		}

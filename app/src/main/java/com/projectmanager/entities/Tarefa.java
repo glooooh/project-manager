@@ -17,14 +17,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tarefa")
-public class Tarefa {
+public class Tarefa extends ScheduledActivity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String titulo;
     private int id_criador;
-    private String descricao;
-    private String prazo;
     private String data_criacao;
     private boolean completa;
     private int id_projeto;
@@ -51,36 +48,12 @@ public class Tarefa {
         this.id = id;
     }
 
-    public String getTitulo() {
-        return this.titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
     public int getId_criador() {
         return this.id_criador;
     }
 
     public void setId_criador(int id_criador) {
         this.id_criador = id_criador;
-    }
-
-    public String getDescricao() {
-        return this.descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public String getPrazo() {
-        return this.prazo;
-    }
-
-    public void setPrazo(String prazo) {
-        this.prazo = prazo;
     }
 
     public String getData_criacao() {
