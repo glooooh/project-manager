@@ -6,6 +6,26 @@ import jakarta.persistence.MappedSuperclass;
 public abstract class ScheduledActivity {
     private String titulo;
     private String descricao;
-    private String data;
+    private String prazo;
+    public String getTitulo() {
+        return titulo;
+    }
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+    public String getDescricao() {
+        return descricao;
+    }
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+    public String getPrazo() {
+        return prazo;
+    }
+    public void setPrazo(String prazo) {
+        this.prazo = prazo;
+    }
+    
+    
     
 }

@@ -45,10 +45,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="tarefa : ${schedule}">
-                    <td th:text="${tarefa.titulo}"></td>
-                    <td th:text="${tarefa.descricao}"></td>
-                    <td th:text="${tarefa.prazo}"></td>
+                <tr th:each="item : ${schedule}">
+                    <td th:text="${item.titulo}"></td>
+                    <td th:text="${item.descricao}"></td>
+                    <td th:text="${item.prazo}"></td>
                 </tr>
             </tbody>
         </table>

@@ -8,14 +8,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cronograma")
-public class Cronograma {
+public class Cronograma extends ScheduledActivity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String titulo;
-    private String descricao;
-    private String prazo;
     private int projeto_id;
 
 
@@ -25,30 +22,6 @@ public class Cronograma {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getTitulo() {
-        return this.titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescricao() {
-        return this.descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public String getPrazo() {
-        return this.prazo;
-    }
-
-    public void setPrazo(String prazo) {
-        this.prazo = prazo;
     }
 
     public int getProjeto_id() {

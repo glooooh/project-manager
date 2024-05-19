@@ -26,13 +26,8 @@ public class CronogramaServiceImpl implements CronogramaService{
     }
 
     @Override
-    public Cronograma save(int projetoId, String titulo, String message, String data) {
-        Cronograma cronograma = new Cronograma();
-        cronograma.setTitulo(titulo);
-        cronograma.setDescricao(message);
-        cronograma.setPrazo(data);
-
-        return cronogramaRepository.save(cronograma);
+    public Cronograma save(Cronograma newCronograma) {
+        return cronogramaRepository.save(newCronograma);
     }
 
     @Override
