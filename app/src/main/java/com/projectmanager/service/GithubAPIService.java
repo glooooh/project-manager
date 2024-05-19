@@ -30,9 +30,6 @@ import com.projectmanager.model.UsuarioModel;
 public class GithubAPIService {
 
     @Autowired
-    TarefaService tarefaService = new TarefaServiceImpl();
-
-    @Autowired
     UsuarioService usuarioService = new UsuarioServiceImpl();
 
     @Autowired
@@ -99,7 +96,7 @@ public class GithubAPIService {
         return null;
     }
 
-    public void saveIssuesAsTarefas(GHRepository repo) throws IOException {
+    public void saveIssuesAsTarefas(GHRepository repo,TarefaService tarefaService) throws IOException {
         List<GHIssue> issues = repo.getIssues(GHIssueState.OPEN);
         for (GHIssue issue : issues) {
             System.out.println(issue.getTitle()); 

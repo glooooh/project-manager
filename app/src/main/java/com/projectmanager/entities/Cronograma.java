@@ -15,8 +15,8 @@ public class Cronograma {
     private int id;
     private String titulo;
     private String descricao;
-    private String data;
-    private int tarefa_id;
+    private String prazo;
+    private int projeto_id;
 
 
     public int getId() {
@@ -43,20 +43,20 @@ public class Cronograma {
         this.descricao = descricao;
     }
 
-    public String getData() {
-        return this.data;
+    public String getPrazo() {
+        return this.prazo;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setPrazo(String prazo) {
+        this.prazo = prazo;
     }
 
-    public int getTarefa_id() {
-        return this.tarefa_id;
+    public int getProjeto_id() {
+        return this.projeto_id;
     }
 
-    public void setTarefa_id(int tarefa_id) {
-        this.tarefa_id = tarefa_id;
+    public void setProjeto_id(int projeto_id) {
+        this.projeto_id = projeto_id;
     }
 
 }

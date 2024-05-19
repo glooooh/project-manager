@@ -10,6 +10,6 @@ public interface CronogramaService {
     public Cronograma find(int id);
     public Cronograma save(int tarefaId, String titulo, String message, String data);
     public void delete(int id);
-    public void deleteCronogramasTarefa(int idTarefa);
-    public Collection<Cronograma> getCronogramasTarefa(int idTarefa);
+    public void deleteCronogramasProjeto(int idProjeto);
+    public Collection<Cronograma> getCronogramasProjeto(int idProjeto);
 }
