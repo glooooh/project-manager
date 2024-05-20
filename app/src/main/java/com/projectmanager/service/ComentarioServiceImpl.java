@@ -47,10 +47,11 @@ public class ComentarioServiceImpl implements ComentarioService{
     @Override
     public Collection<ComentarioModel> getComentarioTarefa(int tarefaId) {
         ArrayList<ComentarioModel> comentarios = new ArrayList<>();
-        ComentarioModel novoComentario = new ComentarioModel();
+        
         
         for(Comentario comentario : findAll()){
             if(comentario.getTarefa() == tarefaId){
+                ComentarioModel novoComentario = new ComentarioModel();
                 novoComentario.setId(comentario.getId());
                 novoComentario.setComentario(comentario.getComentario());
                 try {
