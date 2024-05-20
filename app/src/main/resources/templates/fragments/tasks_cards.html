@@ -1,8 +1,7 @@
 <div th:fragment="tasks_cards(tarefas)" class="details_task">
     <div class="row">
         <div class="col g-3">
-            <div class="card mb-3 d-flex justify-content-center align-items-center"
-                th:each="tarefa : ${tarefas}">
+            <div class="card mb-3 d-flex justify-content-center align-items-center" th:each="tarefa : ${tarefas}">
                 <div class="card-body">
                     <span th:if="${tarefa.completa}" class="position-absolute top-0 start-0 badge bg-success"
                         style="font-size: 1rem;">✓</span>
@@ -11,11 +10,19 @@
                     <div class="tags">
                         <small>Colaborador(es):</small>
                         <ul class="m-0 p-0">
-                            <li th:each="colaborador : ${tarefa.usuarios}"
-                                class="badge bg-primary text-white mr-1" th:text="${colaborador.username}">
+                            <li th:each="colaborador : ${tarefa.usuarios}" class="badge bg-primary text-white mr-1"
+                                th:text="${colaborador.username}">
                             </li>
                         </ul>
                     </div>
+                    <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repository.name} + '/tasks/' + ${tarefa.id}}"
+                        class="btn btn-primary stretched-link d-block mx-auto">Ver</a>
+                    <!-- <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
+                        data-bs-target="#modalEditTask">
+                        Editar
+                    </button>
+                    <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repository.name} + '/tasks/' + ${tarefa.id} + '/edit'}"
+                        class="btn btn-primary stretched-link d-block mx-auto">Editar</a> -->
                 </div>
             </div>
         </div>

@@ -31,7 +31,6 @@ import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.TarefaService;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @Controller
 @RequestMapping("/user/{user_id}/repositories/{repo_name}/tasks")
 public class TarefaController {
@@ -53,14 +52,14 @@ public class TarefaController {
 
     @GetMapping("")
     public String getUserTarefas(Model model, @PathVariable("repo_name") String repoName,
-    @PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken,
-    @RequestParam(value="error",required = false) String errorMessage) {
+            @PathVariable("user_id") String user_id, OAuth2AuthenticationToken authenticationToken,
+            @RequestParam(value = "error", required = false) String errorMessage) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        
+
         model.addAttribute("user_id", user_id);
-        
+
         model.addAttribute("error", errorMessage);
- 
+
         try {
             GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
             githubService.validateUser(loggedUser, user_id);
@@ -77,44 +76,64 @@ public class TarefaController {
         }
         return "tarefas";
     }
+
     @GetMapping("/{tarefa_id}")
-    public String getTarefa(Model model) {
-        return "error";
+    public String getTarefa(@PathVariable("user_id") String user_id, @PathVariable("repo_name") String repoName,
+            @PathVariable int tarefa_id, OAuth2AuthenticationToken authenticationToken, Model model) {
+        try {
+            Tarefa tarefaEscolhida = tarefaService.find(tarefa_id);
+            model.addAttribute("tarefa", tarefaEscolhida);
+            model.addAttribute("repoName", repoName);
+            model.addAttribute("user_id", user_id);
+
+            String accessToken = githubService.getAccessToken(authenticationToken, "github",
+                    oauth2AuthorizedClientService);
+            GHMyself loggedUser = githubService.getUser(accessToken);
+            RepositoryModel repository = githubService.getRepositoryModel(loggedUser, repoName);
+            model.addAttribute("repository", repository);
+
+            return "tarefa";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Erro ao obter os repositórios do usuário: " + e.getMessage());
+            return "error";
+        }
+
     }
 
     @PostMapping("/new")
     public String createTarefa(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-                            @PathVariable("repo_name") String repoName,@PathVariable("user_id") String user_id,
-                            Model model) {
+            @PathVariable("repo_name") String repoName, @PathVariable("user_id") String user_id,
+            Model model) {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
-        try {       
+        try {
             tarefaService.save(novaTarefa, repoName, accessToken, user_id);
         } catch (IOException e) {
             e.printStackTrace();
-            model.addAttribute("error",e.getMessage());
+            model.addAttribute("error", e.getMessage());
             return "error";
         } catch (DateTimeParseException e) {
             e.printStackTrace();
-            model.addAttribute("error",e.getMessage());
+            model.addAttribute("error", e.getMessage());
             return "error";
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            model.addAttribute("error",e.getMessage());
+            model.addAttribute("error", e.getMessage());
             return "error";
         } catch (BusinessException e) {
-            String redirect = "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks?error=" + e.getMessage();
+            String redirect = "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks?error="
+                    + e.getMessage();
             return redirect;
-        } catch (PermissionDeniedDataAccessException e){
-            model.addAttribute("error",e.getMessage());
+        } catch (PermissionDeniedDataAccessException e) {
+            model.addAttribute("error", e.getMessage());
             return "error";
         }
-        
+
         String redirect = "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks";
         return redirect;
     }
 
-    @GetMapping("/{tarefa_id}/comentarios")
+    @GetMapping("/{tarefa_id}/comments")
     public String getComentarios(Model model, @PathVariable("tarefa_id") String tarefaId) {
 
         Collection<ComentarioModel> comentarios = comentarioService.getComentarioTarefa(Integer.parseInt(tarefaId));
@@ -123,9 +142,9 @@ public class TarefaController {
         return "comentarios";
     }
 
-    @PostMapping("/{tarefa_id}/comentarios")
+    @PostMapping("/{tarefa_id}/comments")
     public String createComentario(@PathVariable("repo_name") String repoName, @PathVariable("user_id") String userId,
-            @PathVariable("tarefa_id") String tarefaIdStr,@RequestParam String message) {
+            @PathVariable("tarefa_id") String tarefaIdStr, @RequestParam String message) {
         // Criar comentario dentro da tarefa
         System.out.println("Estado comentario");
 
@@ -133,23 +152,15 @@ public class TarefaController {
 
         System.out.println(message);
 
-
         String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/tasks/" + tarefaIdStr
-                + "/comentarios";
+                + "/comments";
         return redirect;
-    }
-
-    @GetMapping("/{tarefa_id}/edit")
-    public String editTarefa(Model model, @PathVariable("tarefa_id") String tarefaId) {
-        Tarefa tarefa = tarefaService.find(Integer.parseInt(tarefaId));
-        model.addAttribute("tarefa", tarefa);
-        return "edittarefa";
     }
 
     @PostMapping("/{tarefa_id}/edit")
     public String postMethodName(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-    @PathVariable("repo_name") String repoName, @PathVariable("tarefa_id") String tarefaId, @PathVariable("user_id") String user_id) throws IOException {
-        
+    @PathVariable("repo_name") String repoName, @PathVariable("tarefa_id") String tarefaId, @PathVariable("user_id") String user_id, Model model) throws IOException {
+
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         try {
             int id = Integer.parseInt(tarefaId);
@@ -162,8 +173,8 @@ public class TarefaController {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-        
-        return "redirect:/user/{user_id}/repositories/{repo_name}/tasks";
+
+        return "redirect:/user/{user_id}/repositories/{repo_name}/tasks/{tarefa_id}";
     }
-    
+
 }
