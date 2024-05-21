@@ -3,8 +3,11 @@ package com.projectmanager.controller;
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
+import java.util.HashMap;
+
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.projectmanager.entities.Comentario;
+import com.projectmanager.entities.Projeto;
 import com.projectmanager.entities.Tarefa;
 import com.projectmanager.exceptions.BusinessException;
 import com.projectmanager.forms.TarefaForm;
@@ -28,6 +32,7 @@ import com.projectmanager.model.ComentarioModel;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.service.ComentarioService;
 import com.projectmanager.service.GithubAPIService;
+import com.projectmanager.service.ProjetoService;
 import com.projectmanager.service.TarefaService;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -44,6 +49,9 @@ public class TarefaController {
     @Autowired
     ComentarioService comentarioService;
 
+    @Autowired
+    ProjetoService projetoService;
+
     public TarefaController(GithubAPIService githubService,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
         this.githubService = githubService;
@@ -56,18 +64,30 @@ public class TarefaController {
             @RequestParam(value = "error", required = false) String errorMessage) {
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
 
-        model.addAttribute("user_id", user_id);
+
 
         model.addAttribute("error", errorMessage);
+        int userIdInt = Integer.parseInt(user_id);
+        model.addAttribute("user_id", user_id);
+
+       
+
+            
+            
 
         try {
+            Map<Tarefa, Projeto> tarefaProjetoMap = new HashMap<>();
             GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
             githubService.validateUser(loggedUser, user_id);
             GHRepository repo = githubService.getRepository(loggedUser, repoName);
             int repoId = (int) repo.getId();
             Collection<Tarefa> tasks = tarefaService.getTaskByProject(repoId);
             model.addAttribute("tarefas", tasks);
-
+            for (Tarefa tarefa : tasks) {
+                Projeto projeto = projetoService.find(tarefa.getId_projeto());
+                tarefaProjetoMap.put(tarefa, projeto);
+            }
+            model.addAttribute("tarefaProjetoMap", tarefaProjetoMap);
             RepositoryModel repository = githubService.getRepositoryModel(loggedUser, repoName);// Objeto do repositório
             model.addAttribute("repository", repository);
         } catch (IOException e) {

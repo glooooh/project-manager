@@ -1,21 +1,21 @@
-<div th:fragment="tasks_cards(tarefas)" class="details_task">
+<div th:fragment="tasks_cards(tarefaProjetoMap,user_id)" class="details_task">
     <div class="row">
         <div class="col g-3">
-            <div class="card mb-3 d-flex justify-content-center align-items-center" th:each="tarefa : ${tarefas}">
+            <div class="card mb-3 d-flex justify-content-center align-items-center" th:each="entry : ${tarefaProjetoMap}">
                 <div class="card-body">
-                    <span th:if="${tarefa.completa}" class="position-absolute top-0 start-0 badge bg-success"
+                    <span th:if="${entry.key.completa}" class="position-absolute top-0 start-0 badge bg-success"
                         style="font-size: 1rem;">✓</span>
-                    <h5 class="card-title" th:text="${tarefa.titulo}"></h5>
-                    <p class="card-text" th:text="${tarefa.descricao}" style="max-height: 2em; overflow: hidden;"></p>
+                    <h5 class="card-title" th:text="${entry.key.titulo}"></h5>
+                    <p class="card-text" th:text="${entry.key.descricao}" style="max-height: 2em; overflow: hidden;"></p>
                     <div class="tags">
                         <small>Colaborador(es):</small>
                         <ul class="m-0 p-0">
-                            <li th:each="colaborador : ${tarefa.usuarios}" class="badge bg-primary text-white mr-1"
+                            <li th:each="colaborador : ${entry.key.usuarios}" class="badge bg-primary text-white mr-1"
                                 th:text="${colaborador.username}">
                             </li>
                         </ul>
                     </div>
-                    <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repository.name} + '/tasks/' + ${tarefa.id}}"
+                    <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${entry.value.nome} + '/tasks/' + ${entry.key.id}}"
                         class="btn btn-primary stretched-link d-block mx-auto mt-2">Ver</a>
                     <!-- <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
                         data-bs-target="#modalEditTask">

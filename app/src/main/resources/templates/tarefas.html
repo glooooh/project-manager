@@ -30,7 +30,7 @@
         <main class="px-3 d-flex flex-column justify-content-center align-items-center mb-auto mt-auto">
             <h2 class="mt-3 mb-5">Tarefas em <span th:text="${repository.name}"></span></h2>
 
-            <div th:replace="~{fragments/tasks_cards :: tasks_cards(${tarefas})}"></div>
+            <div th:replace="~{fragments/tasks_cards :: tasks_cards(tarefaProjetoMap=${tarefaProjetoMap},user_id = ${user_id})}"></div>
 
             <footer class="mt-2 text-white-50">
                 <p th:if="${error}" class="text-danger">Error: <span th:text="${error}"></span></p>

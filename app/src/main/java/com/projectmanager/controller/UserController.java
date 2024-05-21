@@ -3,6 +3,8 @@ package com.projectmanager.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
@@ -51,13 +53,24 @@ public class UserController {
         
         try {
             int userIdInt = Integer.parseInt(userId);
+            model.addAttribute("user_id", userId);
             Iterable<Tarefa> tasks = colaboradorService.findTasksByIDUser(userIdInt, tarefaService);
+
+            Map<Tarefa, Projeto> tarefaProjetoMap = new HashMap<>();
+
+            for (Tarefa tarefa : tasks) {
+                Projeto projeto = projetoService.find(tarefa.getId_projeto());
+                tarefaProjetoMap.put(tarefa, projeto);
+            }
+            model.addAttribute("tarefaProjetoMap", tarefaProjetoMap);
             model.addAttribute("tarefas", tasks);
 
             GHMyself loggedUser = githubService.getUser(accessToken);
             Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
 
             Collection<GHRepository> projects = (Collection<GHRepository>) projetoService.findTop3ByOrderByDataCriacaoDesc(repositories);
+
+            
 
             model.addAttribute("repositories", projects);
         } catch (NumberFormatException e) {
