@@ -41,12 +41,12 @@
                         </li>
                     </ul>
                 </div>
-                <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repoName} + '/tasks/' + ${tarefa.id} + '/comments'}"
-                    class="btn btn-primary d-block mx-auto">Ver Comentários</a>
             </div>
 
-            <div class="buttons mt-3">
-                <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
+            <div class="buttons mt-2">
+                <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repoName} + '/tasks/' + ${tarefa.id} + '/comments'}"
+                    class="btn btn-primary d-block mx-auto">Ver Comentários</a>
+                <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal"
                     data-bs-target="#modalEditTask">
                     Editar Tarefa
                 </button>
@@ -62,7 +62,7 @@
             <div style="color: #000000;" class="modal fade text-start col-md-8" id="modalEditTask" tabindex="-1"
                 aria-labelledby="modalEditTaskLabel" aria-hidden="true">
                 <div
-                    th:replace="~{fragments/modal_form_tarefa :: modal_form_tarefa(${repository}, ${user_id}, ${repoName})}">
+                    th:replace="~{fragments/modal_form_tarefa :: modal_form_tarefa(${repository}, ${user_id}, ${repoName}, ${tarefa}, ${usernames})}">
                 </div>
             </div>
         </main>

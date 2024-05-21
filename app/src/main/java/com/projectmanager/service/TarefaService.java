@@ -3,6 +3,7 @@ package com.projectmanager.service;
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
+import java.util.List;
 
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHRepository;
@@ -20,4 +21,5 @@ public interface TarefaService {
     public void delete(int id);
     public TarefaForm getFormTarefa(int id);
     public Collection<Tarefa> getTaskByProject(int projetoid);
+    public List<String> getCollaboratorsUsernames(Tarefa tarefa);
 }

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.kohsuke.github.GHIssue;
@@ -134,12 +135,11 @@ public class TarefaServiceImpl implements TarefaService{
         colaboradorService.deleteColaboradoresTarefa(tarefaId);
         tarefaRepository.deleteById(tarefaId);
 
-
         tarefa.setTitulo(tarefaForm.getTitulo());
         tarefa.setDescricao(tarefaForm.getDescricao());
         tarefa.setPrazo(tarefaForm.getPrazo());
 
-        tarefaRepository.save(tarefa);
+        tarefa = tarefaRepository.save(tarefa);
 
         Colaborador colaborador = new Colaborador();
         
@@ -174,6 +174,14 @@ public class TarefaServiceImpl implements TarefaService{
         }
 
         return tarefaForm;
+    }
+
+    public List<String> getCollaboratorsUsernames(Tarefa tarefa) {
+        List<String> usernames = new ArrayList<>();
+        for (Usuario usuario : tarefa.getUsuarios()) {
+            usernames.add(usuario.getUsername());
+        }
+        return usernames;
     }
 
     

@@ -70,6 +70,11 @@
                 <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repo_name} + '/feedback'}"
                     class="btn btn-info">Ver
                     Feedback</a>
+
+                <!-- Botão para Ver Cronograma -->
+                <a th:href="@{'/user/' + ${user_id} + '/repositories/' + ${repo_name} + '/cronograma'}"
+                    class="btn btn-info">Ver
+                    Cronograma</a>
             </div>
 
             <footer class="mt-2 text-white-50">
@@ -81,7 +86,7 @@
             <div style="color: #000000;" class="modal fade text-start col-md-8" id="modalNewTask" tabindex="-1"
                 aria-labelledby="modalNewTaskLabel" aria-hidden="true">
                 <div
-                    th:replace="~{fragments/modal_form_tarefa :: modal_form_tarefa(${repository}, ${user.id}, ${repo_name})}">
+                    th:replace="~{fragments/modal_form_tarefa :: modal_form_tarefa(${repository}, ${user.id}, ${repo_name}, null, null)}">
                 </div>
             </div>
         </main>

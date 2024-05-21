@@ -3,7 +3,7 @@ package com.projectmanager.controller;
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-
+import java.util.Set;
 import java.util.Collection;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
@@ -86,6 +86,9 @@ public class TarefaController {
             model.addAttribute("repoName", repoName);
             model.addAttribute("user_id", user_id);
 
+            List<String> collaboratorUsernames = tarefaService.getCollaboratorsUsernames(tarefaEscolhida);
+            model.addAttribute("usernames", collaboratorUsernames);
+
             String accessToken = githubService.getAccessToken(authenticationToken, "github",
                     oauth2AuthorizedClientService);
             GHMyself loggedUser = githubService.getUser(accessToken);
@@ -159,7 +162,8 @@ public class TarefaController {
 
     @PostMapping("/{tarefa_id}/edit")
     public String postMethodName(OAuth2AuthenticationToken authenticationToken, @ModelAttribute TarefaForm novaTarefa,
-    @PathVariable("repo_name") String repoName, @PathVariable("tarefa_id") String tarefaId, @PathVariable("user_id") String user_id, Model model) throws IOException {
+            @PathVariable("repo_name") String repoName, @PathVariable("tarefa_id") String tarefaId,
+            @PathVariable("user_id") String user_id, Model model) throws IOException {
 
         String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
         try {
@@ -174,7 +178,7 @@ public class TarefaController {
             e.printStackTrace();
         }
 
-        return "redirect:/user/{user_id}/repositories/{repo_name}/tasks/{tarefa_id}";
+        return "redirect:/user/" + user_id + "/repositories/" + repoName + "/tasks";
     }
 
 }
