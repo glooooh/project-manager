@@ -2,9 +2,6 @@ package com.projectmanager.entities;
 
 import java.util.List;
 
-import org.hibernate.mapping.Collection;
-import org.hibernate.mapping.Set;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
