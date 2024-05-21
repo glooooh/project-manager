@@ -63,6 +63,7 @@ public class FeedbackController {
         }
         catch (IOException e){
             e.printStackTrace();
+            model.addAttribute(e.getMessage());
             return "error";
         }
         String redirect = "redirect:/user/" + userId + "/repositories/" + repoName + "/feedback";

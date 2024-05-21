@@ -92,6 +92,7 @@ public class TarefaController {
             model.addAttribute("repository", repository);
         } catch (IOException e) {
             e.printStackTrace();
+            model.addAttribute(e.getMessage());
             return "error";
         }
         return "tarefas";
