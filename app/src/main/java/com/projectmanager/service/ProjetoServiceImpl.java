@@ -53,6 +53,7 @@ public class ProjetoServiceImpl implements ProjetoService {
             projeto.setNome(repo.getName());
             projeto.setDescricao(repo.getDescription());
             projeto.setData_inicio(repo.getCreatedAt().toString());
+            
 
             githubService.saveIssuesAsTarefas(repo,tarefaService);
 
