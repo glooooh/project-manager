@@ -58,8 +58,7 @@ public class HomeController {
             String userId = githubService.getUserId(authenticationToken,oauth2AuthorizedClientService);
             return "redirect:/user/" + userId + "/projects";
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            model.addAttribute(e.getMessage());
             return "error";
         }
         
@@ -75,8 +74,7 @@ public class HomeController {
             String userId = githubService.getUserId(authenticationToken,oauth2AuthorizedClientService);
             return "redirect:/user/" + userId + "/repositories";
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            model.addAttribute(e.getMessage());
             return "error";
         }
         
@@ -94,8 +92,7 @@ public class HomeController {
                 loggedUser = githubService.getUser(accessToken);
                 model.addAttribute("user", loggedUser);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                model.addAttribute(e.getMessage());
                 return "error";
             }
             
@@ -113,8 +110,8 @@ public class HomeController {
         return "redirect:/user/" + Integer.toString(usuario.getId());
         }
         catch (IOException e) {
+            model.addAttribute(e.getMessage());
             return "error";
-            // TODO: handle exception
         }
     }
 }

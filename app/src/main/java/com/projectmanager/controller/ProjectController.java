@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.ui.Model; // Importe a classe Model
 
-import com.projectmanager.entities.Projeto;
+
 import com.projectmanager.service.ColaboradorService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.ProjetoService;

@@ -9,8 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +118,6 @@ public class RepositoryController {
             GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
             githubService.validateUser(loggedUser, user_id);
             RepositoryModel repo = githubService.getRepositoryModel(loggedUser, repoName);
-            Collection<Tarefa> tasks = tarefaService.getTaskByProject((int)repo.getId()); //TODO pegar tarefas só do usuário?
             Collection<Cronograma> cronogramas = cronogramaService.getCronogramasProjeto((int)repo.getId());
             Collection<Tarefa> tarefas = tarefaService.getTaskByProject((int)repo.getId());
 

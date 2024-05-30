@@ -93,6 +93,7 @@ public class TarefaServiceImpl implements TarefaService{
         newTarefa.setId_criador((int)issue.getUser().getId());
         newTarefa.setId_projeto((int) repo.getId());
         newTarefa.setData_criacao(issue.getCreatedAt().toString());
+        newTarefa.setPrazo("1111-11-11");
 
         tarefaRepository.save(newTarefa);
 
