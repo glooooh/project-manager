@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHCompare.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.projectmanager.entities.Projeto;
 import com.projectmanager.entities.Tarefa;
+import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.service.ColaboradorService;
+import com.projectmanager.service.GitService;
 import com.projectmanager.service.GithubAPIService;
 import com.projectmanager.service.ProjetoService;
 import com.projectmanager.service.TarefaService;
@@ -27,8 +30,12 @@ import com.projectmanager.service.TarefaService;
 @Controller
 public class UserController {
 
-    private final GithubAPIService githubService;
-    private final OAuth2AuthorizedClientService oauth2AuthorizedClientService;
+    @Autowired
+    @Qualifier("GithubService2")
+    private GitService gitService; // Injete o serviço que obtém os repositórios do GitHub
+
+    @Autowired
+    private OAuth2AuthorizedClientService oauth2AuthorizedClientService;
 
     @Autowired
     ColaboradorService colaboradorService;
@@ -39,17 +46,11 @@ public class UserController {
     @Autowired
     TarefaService tarefaService;
 
-    @Autowired
-    public UserController(GithubAPIService githubService,
-            OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
-        this.githubService = githubService;
-        this.oauth2AuthorizedClientService = oauth2AuthorizedClientService;
-    }
 
     @GetMapping("/user/{user_id}")
     public String getUserPage(@PathVariable("user_id") String userId, OAuth2AuthenticationToken authenticationToken,
             Model model) {
-        String accessToken = githubService.getAccessToken(authenticationToken, "github", oauth2AuthorizedClientService);
+        String accessToken = gitService.getAccessToken(authenticationToken, oauth2AuthorizedClientService);
         
         try {
             int userIdInt = Integer.parseInt(userId);
@@ -65,10 +66,9 @@ public class UserController {
             model.addAttribute("tarefaProjetoMap", tarefaProjetoMap);
             model.addAttribute("tarefas", tasks);
 
-            GHMyself loggedUser = githubService.getUser(accessToken);
-            Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
+            List<RepositoryModel> repositories = gitService.getRepositories(accessToken);
 
-            Collection<GHRepository> projects = (Collection<GHRepository>) projetoService.findTop3ByOrderByDataCriacaoDesc(repositories);
+            Collection<RepositoryModel> projects = (Collection<RepositoryModel>) projetoService.findTop3ByOrderByDataCriacaoDesc(repositories);
 
             
 
