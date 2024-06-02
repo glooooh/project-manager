@@ -94,7 +94,7 @@ public class RepositoryController {
         try {
             GHMyself loggedUser = githubService.getUser(accessToken); // Objeto do usuario
             githubService.validateUser(loggedUser, user_id);
-            projetoService.save(loggedUser, repoName); 
+            projetoService.save(accessToken, repoName); 
             UsuarioModel user = githubService.getUserModel(accessToken); 
             model.addAttribute("user", user);
 

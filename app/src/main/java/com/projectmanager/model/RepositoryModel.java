@@ -15,6 +15,7 @@ public class RepositoryModel {
     private String language;
     private Set<String> branches;
     private Set<String> collaborators;
+    private String createdAt;
     
     public RepositoryModel() {
     }

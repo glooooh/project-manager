@@ -2,19 +2,21 @@ package com.projectmanager.service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 
 import com.projectmanager.entities.Projeto;
+import com.projectmanager.model.RepositoryModel;
 
 public interface ProjetoService {
     public Iterable<Projeto> findAll();
     public Projeto find(int id);
-    public Projeto save(GHMyself loggedUser, String repoName)throws IOException;
+    public Projeto save(String accessToken, String repoName) throws IOException;
     public void delete(int id);
     public boolean exist(int id);
-    public Iterable<GHRepository> findProjectByUserRepositories(Iterable<Projeto> projects, Collection<GHRepository> repositories);
-    public Iterable<GHRepository> findTop3ByOrderByDataCriacaoDesc(Collection<GHRepository> repositories);
-    public Collection<GHRepository> getMatchingProjects(String accessToken) throws IOException ;
+    public Iterable<RepositoryModel> findProjectByUserRepositories(Iterable<Projeto> projects, Collection<RepositoryModel> repositories);
+    public List<RepositoryModel> findTop3ByOrderByDataCriacaoDesc(Collection<RepositoryModel> repositories);
+    public Collection<RepositoryModel> getMatchingProjects(String accessToken) throws IOException ;
     }

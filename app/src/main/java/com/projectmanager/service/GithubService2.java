@@ -15,11 +15,14 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.stereotype.Service;
 
+import com.projectmanager.entities.Usuario;
 import com.projectmanager.exceptions.BusinessException;
 import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.model.UsuarioModel;
 
+@Service("GithubService2")
 public class GithubService2 implements GitService{
 
     GHMyself getGhMyself(String accessToken) throws IOException {
@@ -28,7 +31,7 @@ public class GithubService2 implements GitService{
     }
 
     @Override
-    public UsuarioModel getUser(String accessToken) throws IOException{
+    public UsuarioModel getUsuarioModel(String accessToken) throws IOException{
         try {
             GHMyself user = getGhMyself(accessToken);
             UsuarioModel newUser = new UsuarioModel(user.getLogin(), user.getId(), accessToken,user.getEmail(),user.getName());
@@ -38,6 +41,18 @@ public class GithubService2 implements GitService{
             return null;
         }
         
+    }
+
+    public Usuario getUsuario(String accessToken) throws IOException {
+        GHMyself loggedUser = getGhMyself(accessToken);
+
+        long user_id = loggedUser.getId();
+        Usuario usuario = new Usuario();
+        usuario.setId((int) user_id);
+        usuario.setName(loggedUser.getName());
+        usuario.setUsername(loggedUser.getLogin());
+
+        return usuario;
     }
     
 
@@ -69,6 +84,7 @@ public class GithubService2 implements GitService{
             newRepo.setUrl(oldRepo.getUrl().toString());
             newRepo.setBranches(oldRepo.getBranches().keySet());
             newRepo.setCollaborators(oldRepo.getCollaboratorNames());
+            newRepo.setCreatedAt(oldRepo.getCreatedAt().toString());
             repositoryModels.add(newRepo);
         }
         return repositoryModels;
@@ -105,8 +121,10 @@ public class GithubService2 implements GitService{
     }
 
     @Override
-    public String getAccessToken(OAuth2AuthenticationToken authenticationToken, String clientRegistrationId,
+    public String getAccessToken(OAuth2AuthenticationToken authenticationToken,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) {
+
+        String clientRegistrationId = "github";
         OAuth2AuthorizedClient client = oauth2AuthorizedClientService.loadAuthorizedClient(clientRegistrationId, authenticationToken.getName());
 
         if (client != null) {
@@ -129,12 +147,13 @@ public class GithubService2 implements GitService{
     public String getUserId(OAuth2AuthenticationToken authenticationToken,
             OAuth2AuthorizedClientService oauth2AuthorizedClientService) throws IOException{
                  if (isAuthenticated(authenticationToken)) {
-                    String accessToken = getAccessToken(authenticationToken, "github",
+                    String accessToken = getAccessToken(authenticationToken,
                             oauth2AuthorizedClientService);
-                    UsuarioModel loggedUser = getUser(accessToken);
+                    UsuarioModel loggedUser = getUsuarioModel(accessToken);
                     return String.valueOf(loggedUser.getId());
             }
-            return null; // Retornar null ou algum valor padrão se o usuário não estiver autenticado
+            throw new PermissionDeniedDataAccessException("Usuário não autenticado", null);
+           // return null; // Retornar null ou algum valor padrão se o usuário não estiver autenticado
     }
 
     @Override

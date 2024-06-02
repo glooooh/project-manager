@@ -14,15 +14,19 @@ import java.util.Locale;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.projectmanager.entities.Projeto;
+import com.projectmanager.model.RepositoryModel;
 import com.projectmanager.repositories.ProjetoRepository;
 
 @Service("ProjetoService")
 public class ProjetoServiceImpl implements ProjetoService {
     @Autowired
-    GithubAPIService githubService;
+    @Qualifier("GithubService2")
+    private GitService gitService; // Injete o serviço que obtém os repositórios do GitHub
+
     @Autowired
     ProjetoRepository projetoRepository;
     @Autowired
@@ -41,10 +45,10 @@ public class ProjetoServiceImpl implements ProjetoService {
     }
 
     @Override
-    public Projeto save(GHMyself loggedUser, String repoName) throws IOException {
+    public Projeto save(String accessToken, String repoName) throws IOException {
         Projeto projeto = new Projeto();
 
-        GHRepository repo = githubService.getRepository(loggedUser, repoName);
+        RepositoryModel repo = gitService.getRepository(accessToken, repoName);
 
         if (!exist((int) repo.getId())) {
 
@@ -55,7 +59,7 @@ public class ProjetoServiceImpl implements ProjetoService {
             projeto.setData_inicio(repo.getCreatedAt().toString());
             
 
-            githubService.saveIssuesAsTarefas(repo,tarefaService);
+            gitService.saveIssuesAsTarefas(repo,tarefaService);
 
             return projetoRepository.save(projeto);
 
@@ -76,12 +80,12 @@ public class ProjetoServiceImpl implements ProjetoService {
     }
 
     @Override
-    public Iterable<GHRepository> findProjectByUserRepositories(Iterable<Projeto> projects,
-            Collection<GHRepository> repositories) {
-        Collection<GHRepository> result = new ArrayList<>();
+    public Iterable<RepositoryModel> findProjectByUserRepositories(Iterable<Projeto> projects,
+            Collection<RepositoryModel> repositories) {
+        Collection<RepositoryModel> result = new ArrayList<>();
 
         for (Projeto projeto : projects) {
-            for (GHRepository repo : repositories) {
+            for (RepositoryModel repo : repositories) {
                 if (repo.getName().equals(projeto.getNome())) {
                     result.add(repo);
                     break;
@@ -112,21 +116,21 @@ public class ProjetoServiceImpl implements ProjetoService {
     }
 
     @Override
-    public List<GHRepository> findTop3ByOrderByDataCriacaoDesc(Collection<GHRepository> repositories) {
-        List<GHRepository> orderedProjects = (List<GHRepository>) findProjectByUserRepositories(orderByDate(),
+    public List<RepositoryModel> findTop3ByOrderByDataCriacaoDesc(Collection<RepositoryModel> repositories) {
+        List<RepositoryModel> orderedProjects = (List<RepositoryModel>) findProjectByUserRepositories(orderByDate(),
                 repositories);
 
-        List<GHRepository> top3Projects = orderedProjects.subList(0, Math.min(3, orderedProjects.size()));
+        List<RepositoryModel> top3Projects = orderedProjects.subList(0, Math.min(3, orderedProjects.size()));
 
         return top3Projects;
     }
 
-    public Collection<GHRepository> getMatchingProjects(String accessToken) throws IOException {
-        GHMyself loggedUser = githubService.getUser(accessToken);    
-        Collection<GHRepository> projects = new ArrayList<>();
-        Collection<GHRepository> repositories = githubService.getRepositories(loggedUser);
+    public Collection<RepositoryModel> getMatchingProjects(String accessToken) throws IOException {
+          
+        List<RepositoryModel> projects = new ArrayList<>();
+        List<RepositoryModel> repositories = gitService.getRepositories(accessToken);
         for (Projeto projeto : findAll()) {
-            for (GHRepository repo : repositories) {
+            for (RepositoryModel repo : repositories) {
                 if (repo.getName().equals(projeto.getNome())) {
                     projects.add(repo);
                     break;
